@@ -16,7 +16,7 @@ async function signInWithGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            redirectTo: 'https://tbacher85.github.io/taberna-latina-alpha/'
+            redirectTo: 'https://tbacher85.github.io/taberna-latina-alpha-v1/'
         }
     });
     
@@ -30,7 +30,7 @@ async function signInWithEmail(email) {
     const { error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
-            emailRedirectTo: 'https://tbacher85.github.io/taberna-latina-alpha/'
+            emailRedirectTo: 'https://tbacher85.github.io/taberna-latina-alpha-v1/'
         },
     });
     
