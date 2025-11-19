@@ -8,7 +8,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ==================== TEST USER CONFIGURATION ====================
 const TEST_EMAILS = [
     'timothe.bacher@gmail.com',  // Your test email
-    'test@example.com'           // Add more test emails here
+    'your-other-email@gmail.com' // Add more test emails here
 ];
 
 // ==================== DATABASE FUNCTIONS ====================
@@ -17,34 +17,54 @@ async function trackMessage(userId, latinText, englishText, isUser) {
     
     try {
         // Update daily usage
-        const { data: usageData } = await supabase
+        const { data: usageData, error: usageError } = await supabase
             .from('user_usage')
             .select('*')
             .eq('user_id', userId)
             .eq('date', today)
             .single();
             
+        if (usageError && usageError.code !== 'PGRST116') { // PGRST116 = no rows returned
+            console.error('Error fetching usage data:', usageError);
+        }
+        
+        let newCount;
+        
         if (usageData) {
-            await supabase
+            // Update existing
+            newCount = usageData.messages_sent + 1;
+            const { error: updateError } = await supabase
                 .from('user_usage')
                 .update({ 
-                    messages_sent: usageData.messages_sent + 1,
+                    messages_sent: newCount,
                     last_active: new Date()
                 })
                 .eq('id', usageData.id);
+                
+            if (updateError) {
+                console.error('Error updating usage:', updateError);
+                return 0;
+            }
         } else {
-            await supabase
+            // Create new
+            newCount = 1;
+            const { error: insertError } = await supabase
                 .from('user_usage')
                 .insert([{
                     user_id: userId,
                     date: today,
-                    messages_sent: 1,
+                    messages_sent: newCount,
                     last_active: new Date()
                 }]);
+                
+            if (insertError) {
+                console.error('Error inserting usage:', insertError);
+                return 0;
+            }
         }
         
         // Log conversation
-        await supabase
+        const { error: conversationError } = await supabase
             .from('conversations')
             .insert([{
                 user_id: userId,
@@ -54,21 +74,28 @@ async function trackMessage(userId, latinText, englishText, isUser) {
                 created_at: new Date()
             }]);
         
+        if (conversationError) {
+            console.error('Error logging conversation:', conversationError);
+        }
+        
         // Track limit hits
-        const newCount = usageData ? usageData.messages_sent + 1 : 1;
-        if (newCount >= DAILY_MESSAGE_LIMIT) {
-            await supabase
+        if (newCount >= 10) { // DAILY_MESSAGE_LIMIT
+            const { error: limitError } = await supabase
                 .from('limit_hits')
                 .insert([{
                     user_id: userId,
                     hit_time: new Date(),
                     message_count: newCount
                 }]);
+                
+            if (limitError) {
+                console.error('Error logging limit hit:', limitError);
+            }
         }
         
         return newCount;
     } catch (error) {
-        console.error('Error tracking message:', error);
+        console.error('Unexpected error tracking message:', error);
         return 0;
     }
 }
@@ -76,19 +103,28 @@ async function trackMessage(userId, latinText, englishText, isUser) {
 async function loadUserData(userId) {
     const today = new Date().toISOString().split('T')[0];
     try {
-        const { data } = await supabase
+        const { data, error } = await supabase
             .from('user_usage')
             .select('messages_sent')
             .eq('user_id', userId)
             .eq('date', today)
             .single();
             
+        if (error) {
+            if (error.code === 'PGRST116') { // No rows found
+                return 0;
+            }
+            console.error('Error loading user data:', error);
+            return 0;
+        }
+        
         return data ? data.messages_sent : 0;
     } catch (error) {
-        console.error('Error loading user data:', error);
+        console.error('Unexpected error loading user data:', error);
         return 0;
     }
 }
+
 // Make functions available globally
 window.trackMessage = trackMessage;
 window.loadUserData = loadUserData;
