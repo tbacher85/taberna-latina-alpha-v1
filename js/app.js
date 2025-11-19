@@ -17,14 +17,17 @@ function initializeApp() {
         console.log('- supabase:', typeof window.supabase);
         
         if (typeof window.signInWithGoogle === 'function' && 
-            typeof window.showAuthInterface === 'function') {
+            typeof window.showAuthInterface === 'function' &&
+            typeof window.initializeAuth === 'function') {
+            
+            // Initialize auth FIRST - this will show the appropriate interface
+            window.initializeAuth();
+            
+            // Then set up event listeners
             setupEventListeners();
+            
             if (typeof window.updateSuggestedResponses === 'function') {
                 window.updateSuggestedResponses();
-            }
-            // Initialize auth after everything is set up
-            if (typeof window.initializeAuth === 'function') {
-                window.initializeAuth();
             }
         } else {
             console.error('Required functions not available yet, retrying...');
