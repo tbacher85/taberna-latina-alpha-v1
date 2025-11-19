@@ -1,50 +1,73 @@
 // ==================== AUTHENTICATION FUNCTIONS ====================
 let currentUser = null;
+let authInitialized = false;
 
-async function checkAuthState() {
+// Enhanced auth initialization
+async function initializeAuth() {
     try {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        console.log('Initializing auth...');
+        
+        // First, check if we're handling a OAuth callback
+        const { data, error } = await supabase.auth.getSession();
+        
         if (error) {
-            console.error('Error checking auth state:', error);
-            showAuthInterface();
-            return;
+            console.error('Session error:', error);
         }
         
-        if (user) {
-            currentUser = user;
+        if (data.session) {
+            console.log('Found existing session');
+            currentUser = data.session.user;
             await loadUserData();
             showChatInterface();
         } else {
+            console.log('No existing session');
             showAuthInterface();
         }
+        
+        authInitialized = true;
+        
     } catch (error) {
-        console.error('Unexpected error in checkAuthState:', error);
+        console.error('Auth initialization error:', error);
         showAuthInterface();
     }
 }
 
-async function signInWithGoogle() {
-    try {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin + window.location.pathname
+// Enhanced auth state listener
+supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log('Auth state change:', event, 'Session:', session ? 'exists' : 'none');
+    
+    // Wait a brief moment to ensure everything is processed
+    setTimeout(async () => {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            console.log('User signed in or token refreshed');
+            currentUser = session.user;
+            await loadUserData();
+            showChatInterface();
+        } else if (event === 'SIGNED_OUT') {
+            console.log('User signed out');
+            currentUser = null;
+            if (window.latinConversationSystem) {
+                window.latinConversationSystem.userName = null;
+                window.latinConversationSystem.resetConversation();
             }
-        });
-        
-        if (error) {
-            console.error('Error signing in with Google:', error);
-            alert('Error signing in with Google: ' + error.message);
+            showAuthInterface();
+        } else if (event === 'INITIAL_SESSION') {
+            console.log('Initial session processed');
+            // This is the key - handle the initial session from magic link
+            if (session) {
+                currentUser = session.user;
+                await loadUserData();
+                showChatInterface();
+            }
         }
-    } catch (error) {
-        console.error('Unexpected error in Google sign-in:', error);
-        alert('Unexpected error during Google sign-in. Please try again.');
-    }
-}
+    }, 100); // Small delay to ensure state is settled
+});
 
+// Update your signInWithEmail to handle redirect better
 async function signInWithEmail(email) {
     try {
-        // Show loading state
+        console.log('Attempting to send magic link to:', email);
+        
         const sendButton = document.getElementById('send-magic-link');
         const originalText = sendButton.textContent;
         sendButton.textContent = 'Sending...';
@@ -56,131 +79,36 @@ async function signInWithEmail(email) {
                 emailRedirectTo: window.location.origin + window.location.pathname
             },
         });
-        
-        // Reset button state
+
         sendButton.textContent = originalText;
         sendButton.disabled = false;
         
         if (error) {
-            console.error('Full error from Supabase:', error);
-            
-            // More specific error messages
-            if (error.message.includes('Failed to fetch')) {
-                alert('Network error: Cannot connect to authentication service. Please check your internet connection and try again.');
-            } else if (error.message.includes('rate limit')) {
-                alert('Too many attempts. Please wait a few minutes before trying again.');
-            } else {
-                alert('Error sending magic link: ' + error.message);
-            }
+            console.error('Supabase error details:', error);
+            alert('Error sending magic link: ' + error.message);
         } else {
-            alert('Check your email for the magic link! It should arrive within a minute.');
-            // Hide the email form after successful submission
+            alert('Magic link sent! Check your email.');
             document.getElementById('email-auth-form').style.display = 'none';
         }
     } catch (error) {
-        console.error('Unexpected error in email sign-in:', error);
+        console.error('Unexpected error:', error);
         alert('Unexpected error: ' + error.message);
         
-        // Reset button state
         const sendButton = document.getElementById('send-magic-link');
         sendButton.textContent = 'Send Magic Link';
         sendButton.disabled = false;
     }
 }
 
-async function signOut() {
-    try {
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-            console.error('Error signing out:', error);
-            alert('Error signing out: ' + error.message);
-        } else {
-            currentUser = null;
-            if (window.latinConversationSystem) {
-                window.latinConversationSystem.userName = null;
-                window.latinConversationSystem.resetConversation();
-            }
-            showAuthInterface();
-        }
-    } catch (error) {
-        console.error('Unexpected error in signOut:', error);
-    }
+// Make sure we initialize auth when the script loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing auth...');
+    initializeAuth();
+});
+
+// Keep your existing functions but ensure they use the new flow
+async function checkAuthState() {
+    return initializeAuth(); // Use the enhanced version
 }
 
-function showAuthInterface() {
-    const authSection = document.getElementById('auth-section');
-    const userProfile = document.getElementById('user-profile');
-    const chatInterface = document.getElementById('chat-interface');
-    
-    if (authSection) authSection.classList.remove('hidden');
-    if (userProfile) userProfile.classList.add('hidden');
-    if (chatInterface) chatInterface.classList.add('hidden');
-}
-
-async function showChatInterface() {
-    const authSection = document.getElementById('auth-section');
-    const userProfile = document.getElementById('user-profile');
-    const chatInterface = document.getElementById('chat-interface');
-    const userEmail = document.getElementById('user-email');
-    const upgradePrompt = document.getElementById('upgrade-prompt');
-    const upgradeEmail = document.getElementById('upgrade-email');
-    
-    if (authSection) authSection.classList.add('hidden');
-    if (userProfile) userProfile.classList.remove('hidden');
-    if (chatInterface) chatInterface.classList.remove('hidden');
-    
-    if (userEmail && currentUser) {
-        userEmail.textContent = currentUser.email;
-    }
-    
-    // Show upgrade prompt after 5 messages
-    if (upgradePrompt && typeof todaysMessageCount !== 'undefined' && todaysMessageCount >= 5) {
-        upgradePrompt.classList.remove('hidden');
-        if (upgradeEmail && currentUser) {
-            upgradeEmail.value = currentUser.email;
-        }
-    }
-    
-    if (typeof updateMessageCounter === 'function') {
-        updateMessageCounter();
-    }
-}
-
-// Enhanced auth state change listener with error handling
-try {
-    supabase.auth.onAuthStateChange((event, session) => {
-        console.log('Auth state change:', event, session);
-        
-        if (event === 'SIGNED_IN' && session) {
-            currentUser = session.user;
-            if (typeof loadUserData === 'function') {
-                loadUserData().then(() => {
-                    showChatInterface();
-                }).catch(error => {
-                    console.error('Error loading user data after sign-in:', error);
-                    showChatInterface(); // Still show chat even if loading fails
-                });
-            } else {
-                showChatInterface();
-            }
-        } else if (event === 'SIGNED_OUT') {
-            currentUser = null;
-            if (window.latinConversationSystem) {
-                window.latinConversationSystem.userName = null;
-                window.latinConversationSystem.resetConversation();
-            }
-            showAuthInterface();
-        } else if (event === 'TOKEN_REFRESHED') {
-            console.log('Token refreshed');
-        } else if (event === 'USER_UPDATED') {
-            console.log('User updated');
-        }
-    });
-} catch (error) {
-    console.error('Error setting up auth state listener:', error);
-}
-
-// Make functions globally available for HTML onclick events
-window.signInWithGoogle = signInWithGoogle;
-window.signInWithEmail = signInWithEmail;
-window.signOut = signOut;
+// ... rest of your existing auth functions stay the same
