@@ -272,9 +272,18 @@ async function loadUserData() {
         updateMessageCounter();
     }
 }
+
 // Make all chat functions available globally
 window.sendMessage = sendMessage;
 window.updateSuggestedResponses = updateSuggestedResponses;
 window.latinConversationSystem = latinConversationSystem;
+window.todaysMessageCount = todaysMessageCount;
+window.DAILY_MESSAGE_LIMIT = DAILY_MESSAGE_LIMIT;
+window.isTestUser = isTestUser;
+window.canSendMessage = canSendMessage;
+window.updateMessageCounter = updateMessageCounter;
+window.addMessage = addMessage;
+window.showTypingIndicator = showTypingIndicator;
+window.hideTypingIndicator = hideTypingIndicator;
 
 console.log('Chat functions exposed to window');
