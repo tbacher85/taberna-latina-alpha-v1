@@ -89,3 +89,10 @@ async function loadUserData(userId) {
         return 0;
     }
 }
+// Make functions available globally
+window.trackMessage = trackMessage;
+window.loadUserData = loadUserData;
+window.supabase = supabase;
+window.TEST_EMAILS = TEST_EMAILS;
+
+console.log('Database functions exposed to window');
