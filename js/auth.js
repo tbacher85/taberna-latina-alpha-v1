@@ -2,39 +2,59 @@
 let currentUser = null;
 let authInitialized = false;
 
-// Enhanced auth initialization with URL token handling
+// FIXED: Enhanced auth initialization with proper URL token handling
 async function initializeAuth() {
     try {
         console.log('Initializing auth...');
         
-        // Check if we have a magic link token in the URL
-        const urlParams = new URLSearchParams(window.location.hash.substring(1));
-        const accessToken = urlParams.get('access_token');
-        const refreshToken = urlParams.get('refresh_token');
-        
-        if (accessToken) {
-            console.log('Found auth tokens in URL, processing...');
-            // We have tokens in the URL, set the session
-            const { data, error } = await supabase.auth.setSession({
-                access_token: accessToken,
-                refresh_token: refreshToken
+        // FIXED: Properly parse URL fragment (hash) for Supabase tokens
+        if (window.location.hash) {
+            console.log('Found URL hash:', window.location.hash);
+            
+            // Parse the fragment manually since URLSearchParams doesn't work with fragments
+            const fragmentParams = {};
+            window.location.hash.substring(1).split('&').forEach(pair => {
+                const [key, value] = pair.split('=');
+                fragmentParams[key] = value;
             });
             
-            if (error) {
-                console.error('Error setting session from URL:', error);
-            } else if (data.session) {
-                console.log('Session set from URL tokens');
-                currentUser = data.session.user;
-                await loadUserData();
-                showChatInterface();
+            const accessToken = fragmentParams['access_token'];
+            const refreshToken = fragmentParams['refresh_token'];
+            const tokenType = fragmentParams['token_type'];
+            const expiresIn = fragmentParams['expires_in'];
+            
+            console.log('Parsed tokens from URL:', { 
+                accessToken: accessToken ? 'exists' : 'missing',
+                refreshToken: refreshToken ? 'exists' : 'missing',
+                tokenType, expiresIn 
+            });
+            
+            if (accessToken) {
+                console.log('Found auth tokens in URL, processing...');
+                // We have tokens in the URL, set the session
+                const { data, error } = await supabase.auth.setSession({
+                    access_token: accessToken,
+                    refresh_token: refreshToken
+                });
                 
-                // Clear the URL tokens for security
-                window.history.replaceState({}, document.title, window.location.pathname);
-                return;
+                if (error) {
+                    console.error('Error setting session from URL:', error);
+                    // If there's an error with the token, show auth interface
+                    showAuthInterface();
+                } else if (data.session) {
+                    console.log('Session set from URL tokens successfully');
+                    currentUser = data.session.user;
+                    await loadUserData();
+                    showChatInterface();
+                    
+                    // Clear the URL tokens for security
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    return; // Stop here since we successfully processed the magic link
+                }
             }
         }
         
-        // Normal session check if no URL tokens
+        // If no tokens in URL or token processing failed, check for existing session
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
