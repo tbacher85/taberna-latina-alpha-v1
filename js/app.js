@@ -22,6 +22,10 @@ function initializeApp() {
             if (typeof window.updateSuggestedResponses === 'function') {
                 window.updateSuggestedResponses();
             }
+            // Initialize auth after everything is set up
+            if (typeof window.initializeAuth === 'function') {
+                window.initializeAuth();
+            }
         } else {
             console.error('Required functions not available yet, retrying...');
             setTimeout(initializeApp, 500); // Retry after 500ms
