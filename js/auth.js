@@ -26,4 +26,13 @@ window.initializeAuth = async function() {
         console.error('Auth initialization error:', error);
         showAuthInterface();
     }
-};
+}
+// Make all auth functions available globally
+window.signInWithGoogle = signInWithGoogle;
+window.signInWithEmail = signInWithEmail;
+window.signOut = signOut;
+window.showAuthInterface = showAuthInterface;
+window.showChatInterface = showChatInterface;
+window.initializeAuth = initializeAuth;
+
+console.log('Auth functions exposed to window');
