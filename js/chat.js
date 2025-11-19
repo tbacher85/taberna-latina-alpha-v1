@@ -272,3 +272,9 @@ async function loadUserData() {
         updateMessageCounter();
     }
 }
+// Make all chat functions available globally
+window.sendMessage = sendMessage;
+window.updateSuggestedResponses = updateSuggestedResponses;
+window.latinConversationSystem = latinConversationSystem;
+
+console.log('Chat functions exposed to window');
