@@ -115,7 +115,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
 });
 
-// Update your signInWithEmail to handle redirect better
+// FIXED: Updated signInWithEmail with correct Supabase configuration
 async function signInWithEmail(email) {
     try {
         console.log('Attempting to send magic link to:', email);
@@ -125,11 +125,15 @@ async function signInWithEmail(email) {
         sendButton.textContent = 'Sending...';
         sendButton.disabled = true;
 
-        const { error } = await supabase.auth.signInWithOtp({
+        // FIXED: Use the correct Supabase method and configuration
+        const { data, error } = await supabase.auth.signInWithOtp({
             email: email.trim(),
             options: {
-                emailRedirectTo: window.location.origin + window.location.pathname
-            },
+                // CRITICAL: This must match your Supabase project URL configuration
+                emailRedirectTo: window.location.origin + window.location.pathname,
+                // Add this to ensure proper magic link behavior
+                shouldCreateUser: true // This allows new users to be created automatically
+            }
         });
 
         sendButton.textContent = originalText;
@@ -138,8 +142,14 @@ async function signInWithEmail(email) {
         if (error) {
             console.error('Supabase error details:', error);
             alert('Error sending magic link: ' + error.message);
+            
+            // More detailed error information
+            if (error.message.includes('email')) {
+                alert('Please check if the email address is valid.');
+            }
         } else {
-            alert('Magic link sent! Check your email. Make sure to check your spam folder if you don\'t see it.');
+            console.log('Magic link sent successfully:', data);
+            alert('Magic link sent! Check your email. Make sure to check your spam folder if you don\'t see it within a few minutes.');
             document.getElementById('email-auth-form').style.display = 'none';
         }
     } catch (error) {
