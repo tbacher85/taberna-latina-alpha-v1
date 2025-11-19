@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taberna - Latin Conversations Reborn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">TABERNA</div>
+            <div class="tagline">Latin is not dead. It's been waiting 2,000 years to speak with you.</div>
+        </header>
+        
+        <!-- Auth Section -->
+        <div class="auth-section" id="auth-section">
+            <h2>Begin Your Conversation</h2>
+            <p>Sign in to start speaking with Livia Valeria</p>
+            
+            <div class="auth-options">
+                <button class="google-auth-btn" id="google-auth-btn">
+                    <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+                
+                <button class="email-auth-btn" id="email-auth-btn">
+                    ✉️ Continue with Email
+                </button>
+            </div>
+            
+            <div class="email-auth-form" id="email-auth-form">
+                <input type="email" id="email-input" placeholder="Your email address" required>
+                <button class="email-auth-btn" id="send-magic-link" style="width: 100%; margin-top: 1rem;">
+                    Send Magic Link
+                </button>
+            </div>
+        </div>
+        
+        <!-- User Profile (shown after auth) -->
+        <div class="user-profile hidden" id="user-profile">
+            <p>Welcome, <span class="user-email" id="user-email"></span></p>
+            <p>Messages today: <span id="message-count">0</span>/10</p>
+            <button class="logout-btn" id="logout-btn">Log Out</button>
+        </div>
+        
+        <!-- Main Chat Interface (shown after auth) -->
+        <section class="hero hidden" id="chat-interface">
+            <div class="fresco-container">
+                <div class="fresco">
+                    <img src="my-frescoe-avatar.png" alt="Roman Fresco Avatar" class="fresco-img">
+                </div>
+            </div>
+            
+            <div class="chat-preview">
+                <div class="chat-header">
+                    <div class="chat-avatar-small">LV</div>
+                    <div class="chat-partner">Livia Valeria • Patrician Matron</div>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message message-bot">
+                        <div class="latin-text">Salve! Ego Livia Valeria sum. Quid nomen tibi est?</div>
+                        <div class="translation">Hello! I am Livia Valeria. What is your name?</div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typing-indicator">
+                    Livia is typing<span class="typing-dots"></span>
+                </div>
+                
+                <div class="daily-limit-message" id="daily-limit-message">
+                    <strong>Daily Limit Reached</strong><br>
+                    You've used your 10 free messages for today. 
+                    Come back tomorrow or upgrade for unlimited access.
+                </div>
+                
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Scribe responsum tuum Latine...">
+                    <button class="chat-send" id="chat-send">Mitte</button>
+                </div>
+                
+                <div class="suggested-responses" id="suggested-responses">
+                    <!-- Suggested responses will be loaded by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="upgrade-prompt hidden" id="upgrade-prompt">
+                <h3>Want Unlimited Latin Conversations?</h3>
+                <p>Upgrade to get unlimited messages, more Roman characters, and advanced learning features.</p>
+                <form id="upgrade-form" action="https://formspree.io/f/mblpovbz" method="POST">
+                    <input type="email" name="email" id="upgrade-email" placeholder="Your email" required style="width: 100%; padding: 0.8rem; margin: 1rem 0; border-radius: 5px; border: 1px solid var(--primary); color: var(--text);">
+                    <button type="submit" class="upgrade-btn">Notify Me About Premium</button>
+                </form>
+            </div>
+            
+            <h1>Chat with Ancient Romans<br>in Fluent Latin</h1>
+            
+            <p>Step into a world where Latin isn't just a dead language, but a living conversation. <span class="highlight">Taberna</span> lets you speak directly with Roman characters who respond to your words with emotion and personality.</p>
+        </section>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>Living Conversations</h3>
+                <p>Chat with Roman characters who remember your previous conversations and respond with authentic personalities.</p>
+            </div>
+            <div class="feature">
+                <h3>Multiple Characters</h3>
+                <p>Choose from various Roman personas - from patricians to soldiers, each with unique knowledge and perspectives.</p>
+            </div>
+            <div class="feature">
+                <h3>Learn Naturally</h3>
+                <p>Practice Latin in conversation rather than memorization. Perfect for students and enthusiasts alike.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Taberna - Latin Conversations Reborn</p>
+            <p>© 2025 Taberna. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Our JavaScript Files -->
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
