@@ -2,70 +2,68 @@
 let currentUser = null;
 let authInitialized = false;
 
-// Debug function to help with magic link issues
+// Your GitHub Pages URL - CRITICAL FOR AUTH TO WORK
+const GITHUB_SITE_URL = 'https://tbacher85.github.io';
+const GITHUB_APP_URL = 'https://tbacher85.github.io/taberna-latina-alpha-v1/';
+
+// Enhanced debug function
 function debugMagicLink() {
     console.log('=== MAGIC LINK DEBUG INFO ===');
     console.log('Full URL:', window.location.href);
     console.log('Hash:', window.location.hash);
     console.log('Search:', window.location.search);
     console.log('Pathname:', window.location.pathname);
+    console.log('Origin:', window.location.origin);
+    console.log('GitHub URL:', GITHUB_APP_URL);
     console.log('============================');
 }
 
-// FIXED: Enhanced auth initialization with proper URL token handling
+// FIXED: Enhanced auth initialization
 async function initializeAuth() {
     try {
         console.log('Initializing auth...');
-        debugMagicLink(); // Debug info
+        debugMagicLink();
         
-        // FIXED: Properly parse URL fragment (hash) for Supabase tokens
-        if (window.location.hash) {
-            console.log('Found URL hash:', window.location.hash);
+        // Check for tokens in URL fragment
+        if (window.location.hash && window.location.hash.length > 1) {
+            console.log('Processing URL hash:', window.location.hash);
             
-            // Parse the fragment manually since URLSearchParams doesn't work with fragments
             const fragmentParams = {};
             window.location.hash.substring(1).split('&').forEach(pair => {
                 const [key, value] = pair.split('=');
-                fragmentParams[key] = value;
+                fragmentParams[key] = decodeURIComponent(value);
             });
             
             const accessToken = fragmentParams['access_token'];
             const refreshToken = fragmentParams['refresh_token'];
-            const tokenType = fragmentParams['token_type'];
-            const expiresIn = fragmentParams['expires_in'];
             
-            console.log('Parsed tokens from URL:', { 
-                accessToken: accessToken ? 'exists' : 'missing',
-                refreshToken: refreshToken ? 'exists' : 'missing',
-                tokenType, expiresIn 
+            console.log('Found tokens:', { 
+                accessToken: accessToken ? 'YES' : 'NO',
+                refreshToken: refreshToken ? 'YES' : 'NO'
             });
             
             if (accessToken) {
-                console.log('Found auth tokens in URL, processing...');
-                // We have tokens in the URL, set the session
+                console.log('Setting session from URL tokens...');
                 const { data, error } = await supabase.auth.setSession({
                     access_token: accessToken,
                     refresh_token: refreshToken
                 });
                 
                 if (error) {
-                    console.error('Error setting session from URL:', error);
-                    // If there's an error with the token, show auth interface
+                    console.error('Error setting session:', error);
                     showAuthInterface();
                 } else if (data.session) {
-                    console.log('Session set from URL tokens successfully');
+                    console.log('Session set successfully!');
                     currentUser = data.session.user;
                     await loadUserData();
                     showChatInterface();
-                    
-                    // Clear the URL tokens for security
                     window.history.replaceState({}, document.title, window.location.pathname);
-                    return; // Stop here since we successfully processed the magic link
+                    return;
                 }
             }
         }
         
-        // If no tokens in URL or token processing failed, check for existing session
+        // Check existing session
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -78,7 +76,7 @@ async function initializeAuth() {
             await loadUserData();
             showChatInterface();
         } else {
-            console.log('No existing session');
+            console.log('No session found');
             showAuthInterface();
         }
         
@@ -100,7 +98,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         await loadUserData();
         showChatInterface();
         
-        // Clear any URL tokens after successful sign-in
         if (window.location.hash.includes('access_token')) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
@@ -115,7 +112,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
 });
 
-// FIXED: Updated signInWithEmail with correct Supabase configuration
+// FIXED: Magic link with explicit GitHub URL
 async function signInWithEmail(email) {
     try {
         console.log('Attempting to send magic link to:', email);
@@ -125,14 +122,13 @@ async function signInWithEmail(email) {
         sendButton.textContent = 'Sending...';
         sendButton.disabled = true;
 
-        // FIXED: Use the correct Supabase method and configuration
+        // CRITICAL: Use explicit GitHub URL instead of dynamic redirect
+        console.log('Using GitHub URL for redirect:', GITHUB_APP_URL);
+
         const { data, error } = await supabase.auth.signInWithOtp({
             email: email.trim(),
             options: {
-                // CRITICAL: This must match your Supabase project URL configuration
-                emailRedirectTo: window.location.origin + window.location.pathname,
-                // Add this to ensure proper magic link behavior
-                shouldCreateUser: true // This allows new users to be created automatically
+                emailRedirectTo: GITHUB_APP_URL  // Explicit GitHub URL
             }
         });
 
@@ -140,16 +136,11 @@ async function signInWithEmail(email) {
         sendButton.disabled = false;
         
         if (error) {
-            console.error('Supabase error details:', error);
-            alert('Error sending magic link: ' + error.message);
-            
-            // More detailed error information
-            if (error.message.includes('email')) {
-                alert('Please check if the email address is valid.');
-            }
+            console.error('Supabase error:', error);
+            alert('Error: ' + error.message);
         } else {
-            console.log('Magic link sent successfully:', data);
-            alert('Magic link sent! Check your email. Make sure to check your spam folder if you don\'t see it within a few minutes.');
+            console.log('Magic link response:', data);
+            alert('Magic link sent! Please check your email AND spam folder. The link should redirect to: ' + GITHUB_APP_URL);
             document.getElementById('email-auth-form').style.display = 'none';
         }
     } catch (error) {
@@ -162,12 +153,15 @@ async function signInWithEmail(email) {
     }
 }
 
+// FIXED: Google sign-in with explicit GitHub URL
 async function signInWithGoogle() {
     try {
+        console.log('Starting Google OAuth with redirect:', GITHUB_APP_URL);
+        
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin + window.location.pathname
+                redirectTo: GITHUB_APP_URL  // Explicit GitHub URL
             }
         });
         
@@ -226,7 +220,6 @@ async function showChatInterface() {
         userEmail.textContent = currentUser.email;
     }
     
-    // Show upgrade prompt after 5 messages
     if (upgradePrompt && typeof todaysMessageCount !== 'undefined' && todaysMessageCount >= 5) {
         upgradePrompt.classList.remove('hidden');
         if (upgradeEmail && currentUser) {
