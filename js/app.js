@@ -1,15 +1,32 @@
 // ==================== MAIN APPLICATION LOGIC ====================
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('App starting...');
+
+// Wait for ALL scripts to load before initializing
+window.addEventListener('load', function() {
+    console.log('Window fully loaded, starting app...');
     initializeApp();
 });
 
 function initializeApp() {
     console.log('Initializing app...');
-    setupEventListeners();
-    if (typeof updateSuggestedResponses === 'function') {
-        updateSuggestedResponses();
-    }
+    
+    // Wait a moment to ensure all functions are available
+    setTimeout(() => {
+        console.log('All functions check:');
+        console.log('- signInWithGoogle:', typeof window.signInWithGoogle);
+        console.log('- showAuthInterface:', typeof window.showAuthInterface);
+        console.log('- supabase:', typeof window.supabase);
+        
+        if (typeof window.signInWithGoogle === 'function' && 
+            typeof window.showAuthInterface === 'function') {
+            setupEventListeners();
+            if (typeof window.updateSuggestedResponses === 'function') {
+                window.updateSuggestedResponses();
+            }
+        } else {
+            console.error('Required functions not available yet, retrying...');
+            setTimeout(initializeApp, 500); // Retry after 500ms
+        }
+    }, 100);
 }
 
 function setupEventListeners() {
@@ -17,18 +34,12 @@ function setupEventListeners() {
     
     // Google Auth Button
     const googleAuthBtn = document.getElementById('google-auth-btn');
-    if (googleAuthBtn) {
+    if (googleAuthBtn && window.signInWithGoogle) {
         googleAuthBtn.addEventListener('click', function() {
             console.log('Google auth button clicked');
-            if (typeof signInWithGoogle === 'function') {
-                signInWithGoogle();
-            } else {
-                console.error('signInWithGoogle function not found');
-            }
+            window.signInWithGoogle();
         });
         console.log('Google auth listener attached');
-    } else {
-        console.error('Google auth button not found');
     }
     
     // Email Auth Button
@@ -42,61 +53,51 @@ function setupEventListeners() {
             }
         });
         console.log('Email auth listener attached');
-    } else {
-        console.error('Email auth button not found');
     }
     
     // Send Magic Link Button
     const sendMagicLinkBtn = document.getElementById('send-magic-link');
-    if (sendMagicLinkBtn) {
+    if (sendMagicLinkBtn && window.signInWithEmail) {
         sendMagicLinkBtn.addEventListener('click', function() {
             console.log('Send magic link button clicked');
             const emailInput = document.getElementById('email-input');
-            if (emailInput && typeof signInWithEmail === 'function') {
+            if (emailInput) {
                 const email = emailInput.value.trim();
                 if (email) {
-                    signInWithEmail(email);
+                    window.signInWithEmail(email);
                 } else {
                     alert('Please enter an email address');
                 }
             }
         });
         console.log('Send magic link listener attached');
-    } else {
-        console.error('Send magic link button not found');
     }
     
     // Logout Button
     const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
+    if (logoutBtn && window.signOut) {
         logoutBtn.addEventListener('click', function() {
             console.log('Logout button clicked');
-            if (typeof signOut === 'function') {
-                signOut();
-            }
+            window.signOut();
         });
     }
     
     // Chat Send Button
     const chatSendBtn = document.getElementById('chat-send');
-    if (chatSendBtn) {
+    if (chatSendBtn && window.sendMessage) {
         chatSendBtn.addEventListener('click', function() {
             console.log('Chat send button clicked');
-            if (typeof sendMessage === 'function') {
-                sendMessage();
-            }
+            window.sendMessage();
         });
     }
     
     // Chat Input Enter Key
     const chatInput = document.getElementById('chat-input');
-    if (chatInput) {
+    if (chatInput && window.sendMessage) {
         chatInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 console.log('Enter key pressed in chat');
-                if (typeof sendMessage === 'function') {
-                    sendMessage();
-                }
+                window.sendMessage();
             }
         });
     }
@@ -135,9 +136,9 @@ function setupEventListeners() {
         });
     }
     
-    console.log('All event listeners set up');
+    console.log('All event listeners set up successfully!');
 }
 
-// Make sure functions are available globally
+// Make functions available globally
 window.initializeApp = initializeApp;
 window.setupEventListeners = setupEventListeners;
