@@ -2,10 +2,21 @@
 let currentUser = null;
 let authInitialized = false;
 
+// Debug function to help with magic link issues
+function debugMagicLink() {
+    console.log('=== MAGIC LINK DEBUG INFO ===');
+    console.log('Full URL:', window.location.href);
+    console.log('Hash:', window.location.hash);
+    console.log('Search:', window.location.search);
+    console.log('Pathname:', window.location.pathname);
+    console.log('============================');
+}
+
 // FIXED: Enhanced auth initialization with proper URL token handling
 async function initializeAuth() {
     try {
         console.log('Initializing auth...');
+        debugMagicLink(); // Debug info
         
         // FIXED: Properly parse URL fragment (hash) for Supabase tokens
         if (window.location.hash) {
@@ -225,5 +236,6 @@ window.signOut = signOut;
 window.showAuthInterface = showAuthInterface;
 window.showChatInterface = showChatInterface;
 window.initializeAuth = initializeAuth;
+window.debugMagicLink = debugMagicLink;
 
 console.log('Auth functions exposed to window');
