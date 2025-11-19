@@ -2,21 +2,48 @@
 let currentUser = null;
 let authInitialized = false;
 
-// Enhanced auth initialization
+// Enhanced auth initialization with URL token handling
 async function initializeAuth() {
     try {
         console.log('Initializing auth...');
         
-        // First, check if we're handling a OAuth callback
-        const { data, error } = await supabase.auth.getSession();
+        // Check if we have a magic link token in the URL
+        const urlParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = urlParams.get('access_token');
+        const refreshToken = urlParams.get('refresh_token');
         
-        if (error) {
-            console.error('Session error:', error);
+        if (accessToken) {
+            console.log('Found auth tokens in URL, processing...');
+            // We have tokens in the URL, set the session
+            const { data, error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken
+            });
+            
+            if (error) {
+                console.error('Error setting session from URL:', error);
+            } else if (data.session) {
+                console.log('Session set from URL tokens');
+                currentUser = data.session.user;
+                await loadUserData();
+                showChatInterface();
+                
+                // Clear the URL tokens for security
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return;
+            }
         }
         
-        if (data.session) {
+        // Normal session check if no URL tokens
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+            console.error('Session error:', sessionError);
+        }
+        
+        if (sessionData.session) {
             console.log('Found existing session');
-            currentUser = data.session.user;
+            currentUser = sessionData.session.user;
             await loadUserData();
             showChatInterface();
         } else {
@@ -36,31 +63,25 @@ async function initializeAuth() {
 supabase.auth.onAuthStateChange(async (event, session) => {
     console.log('Auth state change:', event, 'Session:', session ? 'exists' : 'none');
     
-    // Wait a brief moment to ensure everything is processed
-    setTimeout(async () => {
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-            console.log('User signed in or token refreshed');
-            currentUser = session.user;
-            await loadUserData();
-            showChatInterface();
-        } else if (event === 'SIGNED_OUT') {
-            console.log('User signed out');
-            currentUser = null;
-            if (window.latinConversationSystem) {
-                window.latinConversationSystem.userName = null;
-                window.latinConversationSystem.resetConversation();
-            }
-            showAuthInterface();
-        } else if (event === 'INITIAL_SESSION') {
-            console.log('Initial session processed');
-            // This is the key - handle the initial session from magic link
-            if (session) {
-                currentUser = session.user;
-                await loadUserData();
-                showChatInterface();
-            }
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+        console.log('User signed in or token refreshed');
+        currentUser = session.user;
+        await loadUserData();
+        showChatInterface();
+        
+        // Clear any URL tokens after successful sign-in
+        if (window.location.hash.includes('access_token')) {
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
-    }, 100); // Small delay to ensure state is settled
+    } else if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
+        currentUser = null;
+        if (window.latinConversationSystem) {
+            window.latinConversationSystem.userName = null;
+            window.latinConversationSystem.resetConversation();
+        }
+        showAuthInterface();
+    }
 });
 
 // Update your signInWithEmail to handle redirect better
@@ -87,7 +108,7 @@ async function signInWithEmail(email) {
             console.error('Supabase error details:', error);
             alert('Error sending magic link: ' + error.message);
         } else {
-            alert('Magic link sent! Check your email.');
+            alert('Magic link sent! Check your email. Make sure to check your spam folder if you don\'t see it.');
             document.getElementById('email-auth-form').style.display = 'none';
         }
     } catch (error) {
