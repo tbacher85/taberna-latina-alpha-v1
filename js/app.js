@@ -1,16 +1,15 @@
 // ==================== MAIN APPLICATION LOGIC ====================
 document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
+    console.log('App starting...');
+    // Auth will initialize itself via its own DOMContentLoaded listener
+    setupEventListeners();
+    updateSuggestedResponses();
 });
 
-function initializeApp() {
-    checkAuthState();
-    setupEventListeners();
-    updateSuggestedResponses(); // Initialize suggested responses
-}
-
 function setupEventListeners() {
-    // Auth event listeners
+    console.log('Setting up event listeners...');
+    
+    // Your existing event listeners...
     document.getElementById('google-auth-btn').addEventListener('click', signInWithGoogle);
     document.getElementById('email-auth-btn').addEventListener('click', function() {
         document.getElementById('email-auth-form').style.display = 'block';
@@ -36,7 +35,7 @@ function setupEventListeners() {
             if (latinText.includes('[Nomen]')) {
                 const name = prompt('Please enter your name:');
                 if (name) {
-                    latinConversationSystem.userName = name;
+                    window.latinConversationSystem.userName = name;
                     document.getElementById('chat-input').value = latinText.replace('[Nomen]', name);
                 }
             } else {
@@ -49,7 +48,6 @@ function setupEventListeners() {
     document.getElementById('upgrade-form').addEventListener('submit', function(e) {
         e.preventDefault();
         alert('Thank you for your interest! We will contact you about premium features soon.');
-        // Formspree will handle the actual submission
         this.submit();
     });
 }
