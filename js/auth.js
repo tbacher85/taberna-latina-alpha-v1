@@ -2,7 +2,7 @@
 let currentUser = null;
 let authInitialized = false;
 
-// Your GitHub Pages URL - CRITICAL FOR AUTH TO WORK
+// Your GitHub Pages URL
 const GITHUB_SITE_URL = 'https://tbacher85.github.io';
 const GITHUB_APP_URL = 'https://tbacher85.github.io/taberna-latina-alpha-v1/';
 
@@ -18,7 +18,7 @@ function debugMagicLink() {
     console.log('============================');
 }
 
-// FIXED: Enhanced auth initialization
+// FIXED: Enhanced auth initialization that handles OTP tokens
 async function initializeAuth() {
     try {
         console.log('Initializing auth...');
@@ -36,14 +36,40 @@ async function initializeAuth() {
             
             const accessToken = fragmentParams['access_token'];
             const refreshToken = fragmentParams['refresh_token'];
+            const otpToken = fragmentParams['token'];
+            const tokenType = fragmentParams['type'];
             
             console.log('Found tokens:', { 
                 accessToken: accessToken ? 'YES' : 'NO',
-                refreshToken: refreshToken ? 'YES' : 'NO'
+                refreshToken: refreshToken ? 'YES' : 'NO',
+                otpToken: otpToken ? 'YES' : 'NO',
+                tokenType: tokenType
             });
             
+            // Handle OTP token from magic link
+            if (otpToken && tokenType === 'magiclink') {
+                console.log('Found OTP token, verifying...');
+                const { data, error } = await supabase.auth.verifyOtp({
+                    token_hash: otpToken,
+                    type: 'magiclink'
+                });
+                
+                if (error) {
+                    console.error('Error verifying OTP:', error);
+                    showAuthInterface();
+                } else if (data.session) {
+                    console.log('OTP verified successfully!');
+                    currentUser = data.session.user;
+                    await loadUserData();
+                    showChatInterface();
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    return;
+                }
+            }
+            
+            // Handle access token (standard flow)
             if (accessToken) {
-                console.log('Setting session from URL tokens...');
+                console.log('Setting session from access token...');
                 const { data, error } = await supabase.auth.setSession({
                     access_token: accessToken,
                     refresh_token: refreshToken
@@ -98,7 +124,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         await loadUserData();
         showChatInterface();
         
-        if (window.location.hash.includes('access_token')) {
+        if (window.location.hash.includes('access_token') || window.location.hash.includes('token')) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     } else if (event === 'SIGNED_OUT') {
@@ -112,7 +138,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
 });
 
-// FIXED: Magic link with explicit GitHub URL
+// Magic link function
 async function signInWithEmail(email) {
     try {
         console.log('Attempting to send magic link to:', email);
@@ -122,13 +148,12 @@ async function signInWithEmail(email) {
         sendButton.textContent = 'Sending...';
         sendButton.disabled = true;
 
-        // CRITICAL: Use explicit GitHub URL instead of dynamic redirect
         console.log('Using GitHub URL for redirect:', GITHUB_APP_URL);
 
         const { data, error } = await supabase.auth.signInWithOtp({
             email: email.trim(),
             options: {
-                emailRedirectTo: GITHUB_APP_URL  // Explicit GitHub URL
+                emailRedirectTo: GITHUB_APP_URL
             }
         });
 
@@ -140,7 +165,7 @@ async function signInWithEmail(email) {
             alert('Error: ' + error.message);
         } else {
             console.log('Magic link response:', data);
-            alert('Magic link sent! Please check your email AND spam folder. The link should redirect to: ' + GITHUB_APP_URL);
+            alert('Magic link sent! Please check your email AND spam folder.');
             document.getElementById('email-auth-form').style.display = 'none';
         }
     } catch (error) {
@@ -153,7 +178,7 @@ async function signInWithEmail(email) {
     }
 }
 
-// FIXED: Google sign-in with explicit GitHub URL
+// Google sign-in
 async function signInWithGoogle() {
     try {
         console.log('Starting Google OAuth with redirect:', GITHUB_APP_URL);
@@ -161,7 +186,7 @@ async function signInWithGoogle() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: GITHUB_APP_URL  // Explicit GitHub URL
+                redirectTo: GITHUB_APP_URL
             }
         });
         
