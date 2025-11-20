@@ -598,66 +598,30 @@
     ];
     
     // ==================== ENHANCED FAKE AI SYSTEM ====================
-    const latinConversationSystem = {
-        userName: null,
-        conversationContext: {
-            knowsName: false,
-            topicsDiscussed: [],
-            currentTopic: 'greeting',
-            conversationDepth: 0
-        },
+// ==================== ADVANCED CONVERSATION SYSTEM ====================
+	latinConversationSystem = {
+		userName: null,
+		conversationContext: conversationSystem.resetConversation(),
+    
+		getResponse(userMessage) {
+        this.conversationContext.conversationDepth++;
         
-        // Use the external scenarios from conversation-data.js
-        scenarios: conversationScenarios,
+			// Use the advanced response system
+			const response = conversationSystem.getResponse(userMessage, this.conversationContext);
         
-        getResponse(userMessage) {
-            this.conversationContext.conversationDepth++;
-            
-            // Extract name if provided
-            if (!this.userName && (userMessage.toLowerCase().includes('mihi nomen') || userMessage.toLowerCase().includes('my name is'))) {
-                const nameMatch = userMessage.match(/(?:mihi nomen|my name is|nomen mihi est)\s+([A-Za-z]+)/i);
-                if (nameMatch && nameMatch[1]) {
-                    this.userName = nameMatch[1];
-                    this.conversationContext.knowsName = true;
-                    this.conversationContext.currentTopic = 'name_response';
-                }
-            }
-            
-            // Get current scenario
-            const currentScenario = this.scenarios[this.conversationContext.currentTopic];
-            if (!currentScenario) {
-                const randomDefault = this.scenarios.default[Math.floor(Math.random() * this.scenarios.default.length)];
-                return randomDefault;
-            }
-            
-            // Get a response from current scenario
-            const response = currentScenario[Math.floor(Math.random() * currentScenario.length)];
-            
-            // Move to next topic
-            if (response.nextTopic && this.conversationContext.conversationDepth > 2) {
-                this.conversationContext.currentTopic = response.nextTopic;
-                this.conversationContext.conversationDepth = 0;
-            }
-            
-            // Personalize response with user's name
-            let finalResponse = {...response};
-            if (this.userName) {
-                finalResponse.latin = finalResponse.latin.replace('[NAME]', this.userName);
-                finalResponse.english = finalResponse.english.replace('[NAME]', this.userName);
-            }
-            
-            return finalResponse;
-        },
+			// Update context if there's a next topic
+			if (response.nextTopic && this.conversationContext.conversationDepth > 1) {
+            this.conversationContext.currentTopic = response.nextTopic;
+            this.conversationContext.conversationDepth = 0;
+			}
         
-        resetConversation() {
-            this.conversationContext = {
-                knowsName: false,
-                topicsDiscussed: [],
-                currentTopic: 'greeting',
-                conversationDepth: 0
-            };
-        }
-    };
+			return response;
+		},
+    
+		resetConversation() {
+        this.conversationContext = conversationSystem.resetConversation();
+		}
+	};
     
     // ==================== APPLICATION LOGIC ====================
     const authSection = document.getElementById('auth-section');
