@@ -1,530 +1,515 @@
-// conversation-data.js - GUIDED ENGAGING CONVERSATION FLOW
+// conversation-data.js - STRUCTURED CONVERSATION FLOW
+// Easy to enrich: Just add more steps to conversationSteps array
+
 const conversationSystem = {
-    // Structured conversation flow for maximum engagement
     currentStep: 0,
     userName: null,
     
-    // Conversation steps with clear questions and expected responses
-    conversationFlow: [
-        // ========== STEP 0: WARM GREETING ==========
+    // CLEAR STRUCTURE: Each step has a question, answers, and next steps
+    conversationSteps: [
+        // ===== STEP 1: WARM GREETING =====
         {
+            id: 1,
             question: {
                 latin: "Salve! Ego Livia Valeria sum. Quid nomen tibi est?",
                 english: "Hello! I am Livia Valeria. What is your name?"
             },
-            responses: {
-                // Expected response patterns
-                patterns: [
-                    /(?:mihi nomen est|my name is|I am|I'm|nomen mihi est|me vocant|they call me)\s+([A-Za-z]+)/i,
-                    /^([A-Za-z]{2,})$/i
-                ],
-                // Suggested buttons
-                suggestions: [
-                    { latin: "Mihi nomen [Nomen] est", english: "My name is..." },
-                    { latin: "Nescio", english: "I don't know" }
-                ]
-            },
             answers: [
                 {
-                    latin: "Salve [NAME]! Nomen dulce est. Gaudeo te cognoscere!",
-                    english: "Hello [NAME]! That's a sweet name. Pleased to meet you!"
+                    type: "name_provided",
+                    pattern: /([A-Za-z]{2,})/,
+                    response: {
+                        latin: "Salve {name}! Nomen dulce est. Gaudeo te cognoscere!",
+                        english: "Hello {name}! That's a sweet name. Pleased to meet you!"
+                    },
+                    nextStep: 2
                 },
                 {
-                    latin: "Ah, sine nomine es! Non est problema. Potes mihi nomen tuum dicere cum voles.",
-                    english: "Ah, you're without a name! No problem. You can tell me your name whenever you want."
+                    type: "no_name",
+                    pattern: /(nescio|don't know|not sure)/i,
+                    response: {
+                        latin: "Nullum problema! Potes mihi nomen tuum dicere cum voles.",
+                        english: "No problem! You can tell me your name whenever you want."
+                    },
+                    nextStep: 2
                 }
             ],
-            nextStep: 1
+            suggestions: [
+                { latin: "Mihi nomen Tim est", english: "My name is Tim" },
+                { latin: "Maria", english: "Just say your name" },
+                { latin: "Nescio", english: "I don't know" }
+            ]
         },
 
-        // ========== STEP 1: ORIGIN STORY ==========
+        // ===== STEP 2: ORIGIN STORY =====
         {
+            id: 2,
             question: {
-                latin: "[NAME], unde in mundo venis?",
-                english: "[NAME], where in the world do you come from?"
-            },
-            responses: {
-                patterns: [
-                    /(rome|italy|italia|roman)/i,
-                    /(america|united states|us|usa|canada)/i,
-                    /(europe|germany|france|spain|britain)/i,
-                    /(asia|china|japan|india)/i,
-                    /(here|near|close|vicinus)/i
-                ],
-                suggestions: [
-                    { latin: "Ex America sum", english: "I'm from America" },
-                    { latin: "Ex Europa venio", english: "I come from Europe" },
-                    { latin: "Romanus sum", english: "I'm Roman" },
-                    { latin: "Hic habito", english: "I live here" }
-                ]
+                latin: "Unde in mundo venis?",
+                english: "Where in the world do you come from?"
             },
             answers: [
                 {
-                    trigger: ["rome", "italy", "italia", "roman"],
-                    latin: "Tu es Romanus? Optime! Ego in villa prope Romam habito. Amasne urbem nostram?",
-                    english: "You're Roman? Excellent! I live in a villa near Rome. Do you love our city?"
+                    type: "from_america",
+                    pattern: /(america|united states|us|usa|canada)/i,
+                    response: {
+                        latin: "Terra trans oceanum! Audivi terras illas esse ingentes.",
+                        english: "Lands across the ocean! I've heard those lands are vast."
+                    },
+                    nextStep: 3
                 },
                 {
-                    trigger: ["america", "united states", "us", "usa", "canada"],
-                    latin: "Terra trans oceanum! Audivi terras illas esse ingentes et liberas. Estne verum?",
-                    english: "Lands across the ocean! I've heard those lands are vast and free. Is it true?"
+                    type: "from_europe",
+                    pattern: /(europe|germany|france|spain|britain|italy)/i,
+                    response: {
+                        latin: "Provinciae Romanae! Estne vita ibi similis vitae Romanae?",
+                        english: "Roman provinces! Is life there similar to Roman life?"
+                    },
+                    nextStep: 3
                 },
                 {
-                    trigger: ["europe", "germany", "france", "spain", "britain"],
-                    latin: "Provinciae Romanae! Estne vita ibi similis vitae Romanae?",
-                    english: "Roman provinces! Is life there similar to Roman life?"
+                    type: "from_rome",
+                    pattern: /(rome|italia|roman)/i,
+                    response: {
+                        latin: "Tu es Romanus? Optime! Ego in villa prope Romam habito.",
+                        english: "You're Roman? Excellent! I live in a villa near Rome."
+                    },
+                    nextStep: 3
                 },
                 {
-                    trigger: ["asia", "china", "japan", "india"],
-                    latin: "Terras orientales! Mercatores de silk road mirabilia narrant. Estne terra pulchra?",
-                    english: "Eastern lands! Merchants tell wonderful stories about the silk road. Is it a beautiful land?"
-                },
-                {
-                    trigger: ["here", "near", "close", "vicinus"],
-                    latin: "Vicinus es! Spero te visitare Romam aliquando. Urbs magnifica est!",
-                    english: "You're nearby! I hope you visit Rome sometime. The city is magnificent!"
+                    type: "default_origin",
+                    pattern: /.*/,
+                    response: {
+                        latin: "Locus interesting! Narra mihi plus de patria tua.",
+                        english: "Interesting place! Tell me more about your country."
+                    },
+                    nextStep: 3
                 }
             ],
-            nextStep: 2
+            suggestions: [
+                { latin: "Ex America sum", english: "I'm from America" },
+                { latin: "Ex Europa venio", english: "I come from Europe" },
+                { latin: "Romanus sum", english: "I'm Roman" }
+            ]
         },
 
-        // ========== STEP 2: CURRENT FEELING ==========
+        // ===== STEP 3: CURRENT FEELING =====
         {
+            id: 3,
             question: {
-                latin: "Dic mihi, [NAME], quomodo te hodie habes?",
-                english: "Tell me, [NAME], how are you feeling today?"
-            },
-            responses: {
-                patterns: [
-                    /(good|well|fine|bene|happy|great|laetus)/i,
-                    /(bad|tired|sad|malus|tristis|fessus)/i,
-                    /(curious|interested|curiosus)/i,
-                    /(confused|lost|nescio)/i
-                ],
-                suggestions: [
-                    { latin: "Bene valeo!", english: "I'm doing well!" },
-                    { latin: "Fatigatus sum", english: "I'm tired" },
-                    { latin: "Curiosus sum", english: "I'm curious" },
-                    { latin: "Nescio", english: "I'm not sure" }
-                ]
+                latin: "Quomodo te hodie habes?",
+                english: "How are you feeling today?"
             },
             answers: [
                 {
-                    trigger: ["good", "well", "fine", "bene", "happy", "great", "laetus"],
-                    latin: "Gaudeo te bene valere! Hodie in horto meo rosas colui. Sol lucet et aves cantant.",
-                    english: "I'm glad you're well! Today I cultivated roses in my garden. The sun shines and birds sing."
+                    type: "feeling_good",
+                    pattern: /(good|well|fine|bene|happy|great)/i,
+                    response: {
+                        latin: "Gaudeo te bene valere! Hodie in horto meo rosas colui.",
+                        english: "I'm glad you're well! Today I cultivated roses in my garden."
+                    },
+                    nextStep: 4
                 },
                 {
-                    trigger: ["bad", "tired", "sad", "malus", "tristis", "fessus"],
-                    latin: "Me paenitet. Saepe me adiuvat ambulatio in horto. Natura animum sanat.",
-                    english: "I'm sorry. Walking in the garden often helps me. Nature heals the soul."
+                    type: "feeling_tired",
+                    pattern: /(tired|fatigatus|sleepy|exhausted)/i,
+                    response: {
+                        latin: "Me paenitet. Saepe me adiuvat ambulatio in horto.",
+                        english: "I'm sorry. Walking in the garden often helps me."
+                    },
+                    nextStep: 4
                 },
                 {
-                    trigger: ["curious", "interested", "curiosus"],
-                    latin: "Curiositas signum animi viventis est! Visne de vita Romana audire?",
-                    english: "Curiosity is a sign of a living soul! Would you like to hear about Roman life?"
+                    type: "feeling_curious",
+                    pattern: /(curious|interested|curiosus)/i,
+                    response: {
+                        latin: "Curiositas signum animi viventis est!",
+                        english: "Curiosity is a sign of a living soul!"
+                    },
+                    nextStep: 4
                 },
                 {
-                    trigger: ["confused", "lost", "nescio"],
-                    latin: "Aliquando etiam ego confundor. Noli timere! Loquamur de rebus iucundis.",
-                    english: "Sometimes I get confused too. Don't worry! Let's talk about pleasant things."
+                    type: "default_feeling",
+                    pattern: /.*/,
+                    response: {
+                        latin: "Intellegeo. Vita habet dies bonos et malos.",
+                        english: "I understand. Life has good days and bad days."
+                    },
+                    nextStep: 4
                 }
             ],
-            nextStep: 3
+            suggestions: [
+                { latin: "Bene valeo!", english: "I'm doing well!" },
+                { latin: "Fatigatus sum", english: "I'm tired" },
+                { latin: "Curiosus sum", english: "I'm curious" }
+            ]
         },
 
-        // ========== STEP 3: ROMAN LIFE INTRODUCTION ==========
+        // ===== STEP 4: ROMAN LIFE INTRODUCTION =====
         {
+            id: 4,
             question: {
                 latin: "Visne audire de vita cotidiana Romana?",
                 english: "Would you like to hear about daily Roman life?"
             },
-            responses: {
-                patterns: [
-                    /(yes|please|certainly|certe|volo)/i,
-                    /(no|not now|maybe later|nunc non)/i,
-                    /(tell|narra|describe)/i
-                ],
-                suggestions: [
-                    { latin: "Certe! Narra mihi", english: "Certainly! Tell me" },
-                    { latin: "Maxime volo!", english: "I really want to!" },
-                    { latin: "De tua vita narra", english: "Tell me about your life" }
-                ]
-            },
             answers: [
                 {
-                    trigger: ["yes", "please", "certainly", "certe", "volo", "tell", "narra", "describe", "maxime"],
-                    latin: "Optime! In Roma, vita incipit cum sole. Mane cibum sumimus: panem, caseum, olivas...",
-                    english: "Excellent! In Rome, life begins with the sun. In the morning we eat: bread, cheese, olives..."
+                    type: "yes_roman_life",
+                    pattern: /(yes|please|certe|volo|tell)/i,
+                    response: {
+                        latin: "Optime! In Roma, vita incipit cum sole oritur...",
+                        english: "Excellent! In Rome, life begins when the sun rises..."
+                    },
+                    nextStep: 5
                 },
                 {
-                    trigger: ["no", "not now", "maybe later", "nunc non"],
-                    latin: "Intellegeo. Saepe ego quoque amo quietem. Quid tu hodie fecisti?",
-                    english: "I understand. I often love quiet too. What did you do today?"
+                    type: "no_roman_life",
+                    pattern: /(no|not now|maybe later)/i,
+                    response: {
+                        latin: "Intellegeo. Loquamur de rebus iucundis.",
+                        english: "I understand. Let's talk about pleasant things."
+                    },
+                    nextStep: 5
+                },
+                {
+                    type: "default_roman",
+                    pattern: /.*/,
+                    response: {
+                        latin: "Forsitan aliquando de Roma narrabo. Nunc, dic mihi...",
+                        english: "Perhaps I'll tell you about Rome sometime. Now, tell me..."
+                    },
+                    nextStep: 5
                 }
             ],
-            nextStep: 4
+            suggestions: [
+                { latin: "Certe! Narra mihi", english: "Certainly! Tell me" },
+                { latin: "Maxime volo!", english: "I really want to!" },
+                { latin: "Alio tempore", english: "Another time" }
+            ]
         },
 
-        // ========== STEP 4: DAILY ACTIVITIES ==========
+        // ===== STEP 5: DAILY ACTIVITIES =====
         {
+            id: 5,
             question: {
                 latin: "Quid facis in vita cotidiana?",
                 english: "What do you do in your daily life?"
             },
-            responses: {
-                patterns: [
-                    /(work|labor|job|officium)/i,
-                    /(school|schola|study|disco)/i,
-                    /(read|books|legere|librum)/i,
-                    /(music|cantare|saltare)/i,
-                    /(sports|exercere|athleta)/i,
-                    /(nothing|nihil|rest|quiesco)/i
-                ],
-                suggestions: [
-                    { latin: "Laboro", english: "I work" },
-                    { latin: "In schola disco", english: "I study in school" },
-                    { latin: "Libros lego", english: "I read books" },
-                    { latin: "Nihil facio", english: "I do nothing" }
-                ]
+            answers: [
+                {
+                    type: "work",
+                    pattern: /(work|labor|job|officium)/i,
+                    response: {
+                        latin: "Labor omnia vincit! Ego quoque epistulas scribo et hortum colo.",
+                        english: "Work conquers all! I also write letters and cultivate the garden."
+                    },
+                    nextStep: 6
+                },
+                {
+                    type: "study",
+                    pattern: /(school|schola|study|disco|learn)/i,
+                    response: {
+                        latin: "Discere semper bonum est! Ego libros Graecos lego.",
+                        english: "Learning is always good! I read Greek books."
+                    },
+                    nextStep: 6
+                },
+                {
+                    type: "hobbies",
+                    pattern: /(read|books|music|sports|hobbies)/i,
+                    response: {
+                        latin: "Hobbies animum recreant! Ego citharam tangere disco.",
+                        english: "Hobbies refresh the soul! I'm learning to play the lyre."
+                    },
+                    nextStep: 6
+                },
+                {
+                    type: "default_activities",
+                    pattern: /.*/,
+                    response: {
+                        latin: "Omnes habemus occupationes diversas. Hoc est bonum!",
+                        english: "We all have different occupations. This is good!"
+                    },
+                    nextStep: 6
+                }
+            ],
+            suggestions: [
+                { latin: "Laboro", english: "I work" },
+                { latin: "In schola disco", english: "I study in school" },
+                { latin: "Libros lego", english: "I read books" }
+            ]
+        },
+
+        // ===== STEP 6: ROMAN CULTURE DEEP DIVE =====
+        {
+            id: 6,
+            question: {
+                latin: "Quae pars culturae Romanae te maxime delectat?",
+                english: "Which part of Roman culture interests you most?"
             },
             answers: [
                 {
-                    trigger: ["work", "labor", "job", "officium"],
-                    latin: "Labor omnia vincit! Ego quoque habeo responsabilitates. Epistulas scribo, hortum colo...",
-                    english: "Work conquers all! I also have responsibilities. I write letters, cultivate the garden..."
+                    type: "gladiators",
+                    pattern: /(gladiators|colosseum|games|ludi)/i,
+                    response: {
+                        latin: "Gladiatores fortiter pugnant! Populus in Colosseo exultat!",
+                        english: "Gladiators fight bravely! The people cheer in the Colosseum!"
+                    },
+                    nextStep: 7
                 },
                 {
-                    trigger: ["school", "schola", "study", "disco"],
-                    latin: "Discere semper bonum est! Ego ipse libros Graecos lego. Quid discis?",
-                    english: "Learning is always good! I myself read Greek books. What do you study?"
+                    type: "gods",
+                    pattern: /(gods|deos|religion|minos)/i,
+                    response: {
+                        latin: "Romani multos deos colunt. Ego Minervam, deam sapientiae, adoro.",
+                        english: "Romans worship many gods. I worship Minerva, goddess of wisdom."
+                    },
+                    nextStep: 7
                 },
                 {
-                    trigger: ["read", "books", "legere", "librum"],
-                    latin: "Lectio animi pabulum est! Ego philosophiam et poetas amo. Quem poetam legis?",
-                    english: "Reading is food for the soul! I love philosophy and poets. Which poet do you read?"
+                    type: "architecture",
+                    pattern: /(buildings|architecture|temples|thermae)/i,
+                    response: {
+                        latin: "Architectura Romana magnifica est! Aquaeductus, viae, templa...",
+                        english: "Roman architecture is magnificent! Aqueducts, roads, temples..."
+                    },
+                    nextStep: 7
                 },
                 {
-                    trigger: ["music", "cantare", "saltare"],
-                    latin: "Musica animam elevat! Ego citharam tangere disco. Canisne aut saltas?",
-                    english: "Music lifts the soul! I'm learning to play the lyre. Do you sing or dance?"
-                },
-                {
-                    trigger: ["sports", "exercere", "athleta"],
-                    latin: "Corpus exercere salubre est! Ego in palaestra ambulo. Athletas in Circo Maximo specto.",
-                    english: "Exercising the body is healthy! I walk in the wrestling school. I watch athletes in Circus Maximus."
-                },
-                {
-                    trigger: ["nothing", "nihil", "rest", "quiesco"],
-                    latin: "Aliquando otium necessarium est! Ego quoque amo quietem in horto meo.",
-                    english: "Sometimes rest is necessary! I also love quiet time in my garden."
+                    type: "default_culture",
+                    pattern: /.*/,
+                    response: {
+                        latin: "Cultura Romana multas habet mirabiles partes.",
+                        english: "Roman culture has many wonderful aspects."
+                    },
+                    nextStep: 7
                 }
             ],
-            nextStep: 5
+            suggestions: [
+                { latin: "Gladiatores", english: "Gladiators" },
+                { latin: "Dei Romani", english: "Roman gods" },
+                { latin: "Architectura", english: "Architecture" }
+            ]
         },
 
-        // ========== STEP 5: GARDEN & NATURE ==========
+        // ===== STEP 7: PERSONAL PHILOSOPHY =====
         {
+            id: 7,
+            question: {
+                latin: "Seneca dicit: 'Non scholae sed vitae discimus.' Credisne hoc?",
+                english: "Seneca says: 'We learn not for school but for life.' Do you believe this?"
+            },
+            answers: [
+                {
+                    type: "agree",
+                    pattern: /(yes|certe|true|verum|agree)/i,
+                    response: {
+                        latin: "Sapienter dicis! Vita ipsa est magister optimus.",
+                        english: "You speak wisely! Life itself is the best teacher."
+                    },
+                    nextStep: 8
+                },
+                {
+                    type: "disagree",
+                    pattern: /(no|non|not really|disagree)/i,
+                    response: {
+                        latin: "Interessant! Forsitan schola et vita ambo importantes sunt.",
+                        english: "Interesting! Perhaps school and life are both important."
+                    },
+                    nextStep: 8
+                },
+                {
+                    type: "unsure",
+                    pattern: /(nescio|don't know|not sure)/i,
+                    response: {
+                        latin: "Haec quaestio profunda est. Tempore discimus veritatem.",
+                        english: "This question is deep. With time we learn the truth."
+                    },
+                    nextStep: 8
+                },
+                {
+                    type: "default_philosophy",
+                    pattern: /.*/,
+                    response: {
+                        latin: "Philosophia nos cogitare facit. Hoc bonum est!",
+                        english: "Philosophy makes us think. This is good!"
+                    },
+                    nextStep: 8
+                }
+            ],
+            suggestions: [
+                { latin: "Certe verum est!", english: "Certainly true!" },
+                { latin: "Non credo", english: "I don't believe so" },
+                { latin: "Nescio", english: "I don't know" }
+            ]
+        },
+
+        // ===== STEP 8: GARDEN & NATURE =====
+        {
+            id: 8,
             question: {
                 latin: "In horto meo multae res crescunt. Amasne plantas et flores?",
                 english: "Many things grow in my garden. Do you like plants and flowers?"
             },
-            responses: {
-                patterns: [
-                    /(yes|love|amo|like|placet)/i,
-                    /(no|not really|non)/i,
-                    /(garden|hortus|plants|flores)/i
-                ],
-                suggestions: [
-                    { latin: "Maxime amo!", english: "I love them very much!" },
-                    { latin: "Non multum curo", english: "I don't care much" },
-                    { latin: "Habeo hortum", english: "I have a garden" }
-                ]
-            },
             answers: [
                 {
-                    trigger: ["yes", "love", "amo", "like", "placet", "garden", "hortus", "plants", "flores", "maxime"],
-                    latin: "Gaudeo! Rosae rubrae et lilium candidum in horto meo crescunt. Sunt dona deorum.",
-                    english: "I'm glad! Red roses and white lilies grow in my garden. They are gifts from the gods."
+                    type: "love_nature",
+                    pattern: /(yes|love|amo|like|placet)/i,
+                    response: {
+                        latin: "Gaudeo! Rosae rubrae et lilium candidum in horto meo crescunt.",
+                        english: "I'm glad! Red roses and white lilies grow in my garden."
+                    },
+                    nextStep: 9
                 },
                 {
-                    trigger: ["no", "not really", "non", "multum"],
-                    latin: "Intellegeo. Non omnes eadem amant. Fortasse alia te delectant?",
-                    english: "I understand. Not everyone loves the same things. Perhaps other things delight you?"
+                    type: "indifferent_nature",
+                    pattern: /(no|not really|non|indifferent)/i,
+                    response: {
+                        latin: "Intellegeo. Non omnes eadem amant. Fortasse alia te delectant?",
+                        english: "I understand. Not everyone loves the same things."
+                    },
+                    nextStep: 9
+                },
+                {
+                    type: "default_nature",
+                    pattern: /.*/,
+                    response: {
+                        latin: "Natura semper mirabilia offert. Saepe in horto meditor.",
+                        english: "Nature always offers wonders. I often meditate in the garden."
+                    },
+                    nextStep: 9
                 }
             ],
-            nextStep: 6
+            suggestions: [
+                { latin: "Maxime amo!", english: "I love them very much!" },
+                { latin: "Non multum curo", english: "I don't care much" },
+                { latin: "Habeo hortum", english: "I have a garden" }
+            ]
         },
 
-        // ========== STEP 6: ROMAN CULTURE ==========
+        // ===== STEP 9: FINAL REFLECTION =====
         {
+            id: 9,
             question: {
-                latin: "Visne audire de spectaculis Romanis? De gladiatoribus in Colosseo?",
-                english: "Would you like to hear about Roman spectacles? About gladiators in the Colosseum?"
-            },
-            responses: {
-                patterns: [
-                    /(yes|please|certe|volo|tell)/i,
-                    /(no|not now|alio tempore)/i,
-                    /(gladiators|colosseum|spectacles)/i
-                ],
-                suggestions: [
-                    { latin: "Certe! De gladiatoribus narra", english: "Certainly! Tell me about gladiators" },
-                    { latin: "De Colosseo narra", english: "Tell me about the Colosseum" },
-                    { latin: "Non nunc", english: "Not now" }
-                ]
+                latin: "Colloquium nostrum finire debemus. Habesne ultimam quaestionem?",
+                english: "We must end our conversation. Do you have a final question?"
             },
             answers: [
                 {
-                    trigger: ["yes", "please", "certe", "volo", "tell", "gladiators", "colosseum", "spectacles"],
-                    latin: "Colosseum est maximum spectacularum! Gladiatores fortiter pugnant. Populus exultat!",
-                    english: "The Colosseum is the greatest spectacle! Gladiators fight bravely. The people cheer!"
+                    type: "question_about_rome",
+                    pattern: /(rome|roma|roman|life|vita)/i,
+                    response: {
+                        latin: "Bona quaestio! Roma semper in corde meo manet. Spero te visitare!",
+                        english: "Good question! Rome always remains in my heart. I hope you visit!"
+                    },
+                    nextStep: 10
                 },
                 {
-                    trigger: ["no", "not now", "alio tempore", "non nunc"],
-                    latin: "Intellegeo. Sunt et alia mirabilia Romae. Thermae, templa, fora...",
-                    english: "I understand. There are other wonders in Rome. Baths, temples, forums..."
+                    type: "question_about_livia",
+                    pattern: /(you|tua|your|life|vita)/i,
+                    response: {
+                        latin: "Gratias! Ego felix sum in villa mea cum familia. Vita bona est!",
+                        english: "Thank you! I am happy in my villa with family. Life is good!"
+                    },
+                    nextStep: 10
+                },
+                {
+                    type: "no_question",
+                    pattern: /(no|non|nothing|nihil)/i,
+                    response: {
+                        latin: "Nullum problema! Fuit mihi iucundum tecum colloqui!",
+                        english: "No problem! It was pleasant to speak with you!"
+                    },
+                    nextStep: 10
+                },
+                {
+                    type: "default_final",
+                    pattern: /.*/,
+                    response: {
+                        latin: "Gratias tibi ago pro colloquio! Spero te iterum visurum!",
+                        english: "Thank you for the conversation! I hope to see you again!"
+                    },
+                    nextStep: 10
                 }
             ],
-            nextStep: 7
+            suggestions: [
+                { latin: "De Roma", english: "About Rome" },
+                { latin: "De vita tua", english: "About your life" },
+                { latin: "Nihil", english: "Nothing" }
+            ]
         },
 
-        // ========== STEP 7: PHILOSOPHY & WISDOM ==========
+        // ===== STEP 10: WARM FAREWELL =====
         {
+            id: 10,
             question: {
-                latin: "Seneca dicit: 'Non scholae sed vitae discimus.' Credisne hoc verum esse?",
-                english: "Seneca says: 'We learn not for school but for life.' Do you believe this is true?"
-            },
-            responses: {
-                patterns: [
-                    /(yes|certe|true|verum)/i,
-                    /(no|non|not really)/i,
-                    /(sometimes|aliquando)/i,
-                    /(nescio|don't know)/i
-                ],
-                suggestions: [
-                    { latin: "Certe verum est!", english: "Certainly true!" },
-                    { latin: "Non credo", english: "I don't believe so" },
-                    { latin: "Nescio", english: "I don't know" }
-                ]
+                latin: "Vale, amice! Memoria nostri colloquii semper mecum manebit. Cras revertare!",
+                english: "Farewell, friend! The memory of our conversation will stay with me. Return tomorrow!"
             },
             answers: [
                 {
-                    trigger: ["yes", "certe", "true", "verum"],
-                    latin: "Sapienter dicis! Vita ipsa est magister optimus. Omnia quae vivimus nos docent.",
-                    english: "You speak wisely! Life itself is the best teacher. Everything we experience teaches us."
-                },
-                {
-                    trigger: ["no", "non", "not really"],
-                    latin: "Interessant! Forsitan schola fundamenta praebet, sed vita aedificat.",
-                    english: "Interesting! Perhaps school provides foundations, but life builds upon them."
-                },
-                {
-                    trigger: ["sometimes", "aliquando"],
-                    latin: "Verum dicis. Aliquando schola docet, aliquando vita. Utraque necessaria sunt.",
-                    english: "You speak truth. Sometimes school teaches, sometimes life. Both are necessary."
-                },
-                {
-                    trigger: ["nescio", "don't know"],
-                    latin: "Haec quaestio profunda est. Tempore discimus veritatem.",
-                    english: "This question is deep. With time we learn the truth."
+                    type: "farewell",
+                    pattern: /.*/,
+                    response: {
+                        latin: "Vale et bene tibi eveniat! Expectabo te cras!",
+                        english: "Farewell and may good things happen to you! I'll expect you tomorrow!"
+                    },
+                    nextStep: 0 // Reset for next conversation
                 }
             ],
-            nextStep: 8
-        },
-
-        // ========== STEP 8: PERSONAL REFLECTION ==========
-        {
-            question: {
-                latin: "[NAME], quid in vita tua te maxime delectat?",
-                english: "[NAME], what brings you the most joy in your life?"
-            },
-            responses: {
-                patterns: [
-                    /(family|familia|friends|amici)/i,
-                    /(work|labor|achievements)/i,
-                    /(hobbies|music|sports|books)/i,
-                    /(travel|nature|animals)/i,
-                    /(nescio|don't know)/i
-                ],
-                suggestions: [
-                    { latin: "Familia mea", english: "My family" },
-                    { latin: "Amici mei", english: "My friends" },
-                    { latin: "Meum opus", english: "My work" },
-                    { latin: "Nescio", english: "I don't know" }
-                ]
-            },
-            answers: [
-                {
-                    trigger: ["family", "familia", "friends", "amici"],
-                    latin: "Pulchrum est! Familia et amici thesauri vitae sunt. Ego quoque meam familiam amo.",
-                    english: "Beautiful! Family and friends are life's treasures. I also love my family."
-                },
-                {
-                    trigger: ["work", "labor", "achievements"],
-                    latin: "Labor te beatum facit! Bonum est habere propositum in vita.",
-                    english: "Work makes you blessed! It's good to have purpose in life."
-                },
-                {
-                    trigger: ["hobbies", "music", "sports", "books"],
-                    latin: "Gaudeo te habere quae te delectant! Haec res vitam iucundiorem faciunt.",
-                    english: "I'm glad you have things that delight you! These things make life more pleasant."
-                },
-                {
-                    trigger: ["travel", "nature", "animals"],
-                    latin: "Mundus plenus est mirabilium! Explorare et admirari bonum est.",
-                    english: "The world is full of wonders! It's good to explore and admire."
-                },
-                {
-                    trigger: ["nescio", "don't know"],
-                    latin: "Forsitan adhuc invenies. Vita est iter, non destinatio.",
-                    english: "Perhaps you will still find it. Life is a journey, not a destination."
-                }
-            ],
-            nextStep: 9
-        },
-
-        // ========== STEP 9: FAREWELL WITH IMPACT ==========
-        {
-            question: {
-                latin: "Tempus discedendi appropinquat, [NAME]. Sed prius... habesne aliquam quaestionem de Roma?",
-                english: "The time to leave approaches, [NAME]. But first... do you have any question about Rome?"
-            },
-            responses: {
-                patterns: [
-                    /(yes|habeo|quaestionem)/i,
-                    /(no|non habeo)/i,
-                    /(food|cena|culina)/i,
-                    /(gods|deos|religion)/i,
-                    /(emperor|imperator)/i
-                ],
-                suggestions: [
-                    { latin: "De cena Romana", english: "About Roman dinner" },
-                    { latin: "De diis Romanis", english: "About Roman gods" },
-                    { latin: "De imperatore", english: "About the emperor" },
-                    { latin: "Non habeo", english: "I don't have one" }
-                ]
-            },
-            answers: [
-                {
-                    trigger: ["food", "cena", "culina"],
-                    latin: "Cenam Romanam amo! Pultem, carnes, pisces, et multas legumes. Cum amicos cenare optimum est!",
-                    english: "I love Roman dinner! Porridge, meats, fish, and many vegetables. Dining with friends is best!"
-                },
-                {
-                    trigger: ["gods", "deos", "religion"],
-                    latin: "Romani multos deos colunt. Ego Minervam, deam sapientiae, adoro. Et tu?",
-                    english: "Romans worship many gods. I worship Minerva, goddess of wisdom. And you?"
-                },
-                {
-                    trigger: ["emperor", "imperator"],
-                    latin: "Imperator noster est Caesar Augustus. Pacem et prosperitatem attulit. Deus est!",
-                    english: "Our emperor is Caesar Augustus. He brought peace and prosperity. He is a god!"
-                },
-                {
-                    trigger: ["yes", "habeo", "quaestionem"],
-                    latin: "Quaestionem tuam libenter audio! Dic mihi quid vis scire.",
-                    english: "I gladly hear your question! Tell me what you want to know."
-                },
-                {
-                    trigger: ["no", "non habeo"],
-                    latin: "Nullum problema! Fuit mihi iucundum tecum colloqui, [NAME]. Spero te iterum visitare!",
-                    english: "No problem! It was pleasant to speak with you, [NAME]. I hope you visit again!"
-                }
-            ],
-            nextStep: 10
-        },
-
-        // ========== STEP 10: FINAL FAREWELL ==========
-        {
-            question: {
-                latin: "Vale, [NAME]! Memoria nostri colloquii semper mecum manebit. Spero te cras iterum visurum!",
-                english: "Farewell, [NAME]! The memory of our conversation will always stay with me. I hope to see you again tomorrow!"
-            },
-            responses: {
-                patterns: [/.*/], // Accept any response
-                suggestions: [
-                    { latin: "Vale, Livia!", english: "Farewell, Livia!" },
-                    { latin: "Gratias tibi ago!", english: "Thank you!" },
-                    { latin: "Cras revertar!", english: "I'll return tomorrow!" }
-                ]
-            },
-            answers: [
-                {
-                    latin: "Fuit mihi iucundum! Spes mecum est te iterum visurum. Vale et bene tibi eveniat!",
-                    english: "It was my pleasure! I hope to see you again. Farewell and may good things happen to you!"
-                }
-            ],
-            nextStep: 0 // Reset conversation
+            suggestions: [
+                { latin: "Vale, Livia!", english: "Farewell, Livia!" },
+                { latin: "Gratias tibi ago!", english: "Thank you!" },
+                { latin: "Cras revertar!", english: "I'll return tomorrow!" }
+            ]
         }
     ],
 
-    // Main response function
+    // SIMPLE RESPONSE HANDLER - Easy to understand and modify
     getResponse(userMessage, currentContext) {
         const message = userMessage.toLowerCase().trim();
+        const currentStep = this.conversationSteps[this.currentStep];
         
-        // Extract name if not already set
-        if (!currentContext.userName && this.currentStep === 0) {
-            const namePatterns = [
-                /(?:mihi nomen est|my name is|I am|I'm|nomen mihi est)\s+([A-Za-z]+)/i,
-                /^([A-Za-z]{2,})$/i
-            ];
-            
-            for (const pattern of namePatterns) {
-                const nameMatch = message.match(pattern);
-                if (nameMatch && nameMatch[1]) {
-                    currentContext.userName = nameMatch[1];
-                    break;
-                }
+        // Extract name if in first step
+        if (this.currentStep === 0 && !currentContext.userName) {
+            const nameMatch = message.match(/([A-Za-z]{2,})/);
+            if (nameMatch && nameMatch[1]) {
+                currentContext.userName = nameMatch[1];
             }
         }
 
-        // Get current step
-        const currentStep = this.conversationFlow[this.currentStep];
-        
         // Find matching answer
-        let answer = currentStep.answers[0]; // Default to first answer
-        
-        for (const ans of currentStep.answers) {
-            if (ans.trigger) {
-                for (const trigger of ans.trigger) {
-                    if (message.includes(trigger)) {
-                        answer = ans;
-                        break;
-                    }
-                }
-            }
-        }
+        let selectedAnswer = currentStep.answers.find(answer => 
+            message.match(answer.pattern)
+        ) || currentStep.answers.find(answer => 
+            answer.type.includes("default")
+        ) || currentStep.answers[0];
 
         // Move to next step
-        this.currentStep = currentStep.nextStep;
-        
+        this.currentStep = selectedAnswer.nextStep;
+
         // Personalize response
-        let finalAnswer = { ...answer };
+        let response = { ...selectedAnswer.response };
         if (currentContext.userName) {
-            if (finalAnswer.latin) {
-                finalAnswer.latin = finalAnswer.latin.replace(/\[NAME\]/g, currentContext.userName);
-            }
-            if (finalAnswer.english) {
-                finalAnswer.english = finalAnswer.english.replace(/\[NAME\]/g, currentContext.userName);
-            }
+            response.latin = response.latin.replace(/{name}/g, currentContext.userName);
+            response.english = response.english.replace(/{name}/g, currentContext.userName);
         }
 
         return {
-            latin: finalAnswer.latin,
-            english: finalAnswer.english,
-            suggestions: this.conversationFlow[this.currentStep]?.responses?.suggestions || []
+            latin: response.latin,
+            english: response.english,
+            suggestions: this.conversationSteps[this.currentStep]?.suggestions || []
         };
     },
 
     // Get current question for display
     getCurrentQuestion(currentContext) {
-        const currentStep = this.conversationFlow[this.currentStep];
+        const currentStep = this.conversationSteps[this.currentStep];
         let question = { ...currentStep.question };
         
         if (currentContext.userName) {
-            question.latin = question.latin.replace(/\[NAME\]/g, currentContext.userName);
-            question.english = question.english.replace(/\[NAME\]/g, currentContext.userName);
+            question.latin = question.latin.replace(/{name}/g, currentContext.userName);
+            question.english = question.english.replace(/{name}/g, currentContext.userName);
         }
         
         return question;
@@ -532,7 +517,7 @@ const conversationSystem = {
 
     // Get suggestions for current step
     getCurrentSuggestions() {
-        return this.conversationFlow[this.currentStep]?.responses?.suggestions || [];
+        return this.conversationSteps[this.currentStep]?.suggestions || [];
     },
 
     resetConversation() {
@@ -544,5 +529,5 @@ const conversationSystem = {
     }
 };
 
-// Enhanced suggested responses that change with conversation flow
+// Initialize suggestions
 const suggestedResponsesData = conversationSystem.getCurrentSuggestions();
