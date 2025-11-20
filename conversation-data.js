@@ -1,11 +1,11 @@
-// conversation-data.js - SCRIPTED SCENARIO CONVERSATION
-// Livia drives the entire conversation with direct question-response pairs
+// conversation-data.js - IMPROVED SCRIPTED CONVERSATION
+// Proper name extraction + Latin learning bubbles
 
 const conversationSystem = {
     currentStep: 0,
     userName: null,
     
-    // TIGHTLY SCRIPTED CONVERSATION: Livia asks, user picks from direct responses
+    // SCRIPTED CONVERSATION WITH PROPER NAME HANDLING
     conversationSteps: [
         // ===== STEP 1: WELCOME & NAME =====
         {
@@ -16,21 +16,22 @@ const conversationSystem = {
             },
             userOptions: [
                 { 
-                    latin: "Mihi nomen Tim est", 
-                    english: "My name is Tim",
+                    latin: "Mihi nomen [Nomen] est", 
+                    english: "My name is [Name]",
                     nextStep: 2
                 },
                 { 
-                    latin: "Maria mihi nomen est", 
-                    english: "My name is Maria",
+                    latin: "Nomen mihi est [Nomen]", 
+                    english: "My name is [Name]",
                     nextStep: 2
                 },
                 { 
-                    latin: "Marcus sum", 
-                    english: "I am Marcus",
+                    latin: "Ego sum [Nomen]", 
+                    english: "I am [Name]",
                     nextStep: 2
                 }
-            ]
+            ],
+            isNameStep: true
         },
 
         // ===== STEP 2: WELCOME RESPONSE =====
@@ -42,18 +43,18 @@ const conversationSystem = {
             },
             userOptions: [
                 { 
-                    latin: "Certe! Volo discere", 
-                    english: "Certainly! I want to learn",
+                    latin: "Certe! Volo discere de Roma", 
+                    english: "Certainly! I want to learn about Rome",
                     nextStep: 3
                 },
                 { 
-                    latin: "Maxime volo!", 
-                    english: "I really want to!",
+                    latin: "Maxime volo audire!", 
+                    english: "I really want to hear!",
                     nextStep: 3
                 },
                 { 
-                    latin: "Ita, quaeso", 
-                    english: "Yes, please",
+                    latin: "Ita, quaeso narra", 
+                    english: "Yes, please tell",
                     nextStep: 3
                 }
             ]
@@ -63,23 +64,23 @@ const conversationSystem = {
         {
             id: 3,
             livia: {
-                latin: "Optime! In Roma, vita incipit cum sole. Mane cibum sumimus, deinde aut in forum aut in thermas imus. Quid vis primum audire?",
-                english: "Excellent! In Rome, life begins with the sun. In the morning we eat, then we go either to the forum or to the baths. What would you like to hear first?"
+                latin: "Optime! In Roma, vita incipit cum sole. Mane cibum sumimus, deinde aut in forum aut in thermas imus. Quid vis primum audire, {name}?",
+                english: "Excellent! In Rome, life begins with the sun. In the morning we eat, then we go either to the forum or to the baths. What would you like to hear first, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "De foro Romano", 
-                    english: "About the Roman Forum",
+                    latin: "De foro Romano narra", 
+                    english: "Tell me about the Roman Forum",
                     nextStep: 4
                 },
                 { 
-                    latin: "De thermis", 
-                    english: "About the baths",
+                    latin: "De thermis quaeso", 
+                    english: "About the baths, please",
                     nextStep: 5
                 },
                 { 
-                    latin: "De cena Romana", 
-                    english: "About Roman dinner",
+                    latin: "De cena Romana disco", 
+                    english: "I want to learn about Roman dinner",
                     nextStep: 6
                 }
             ]
@@ -89,18 +90,18 @@ const conversationSystem = {
         {
             id: 4,
             livia: {
-                latin: "Forum Romanum cor urbis est! Ibi mercatores vendunt, senatores disputant, et amici colloquuntur. Omnia ibi fiunt! Visne plus audire de mercatoribus an de senatoribus?",
-                english: "The Roman Forum is the heart of the city! There merchants sell, senators debate, and friends chat. Everything happens there! Would you like to hear more about merchants or senators?"
+                latin: "Forum Romanum cor urbis est! Ibi mercatores vendunt, senatores disputant, et amici colloquuntur. Omnia ibi fiunt! Visne plus audire de mercatoribus an de senatoribus, {name}?",
+                english: "The Roman Forum is the heart of the city! There merchants sell, senators debate, and friends chat. Everything happens there! Would you like to hear more about merchants or senators, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "De mercatoribus", 
-                    english: "About merchants",
+                    latin: "De mercatoribus audire volo", 
+                    english: "I want to hear about merchants",
                     nextStep: 7
                 },
                 { 
-                    latin: "De senatoribus", 
-                    english: "About senators",
+                    latin: "De senatoribus quaeso", 
+                    english: "About senators, please",
                     nextStep: 8
                 },
                 { 
@@ -115,23 +116,23 @@ const conversationSystem = {
         {
             id: 5,
             livia: {
-                latin: "Thermae non solum ad lavandum sunt! Ibi socializamus, negotia agimus, et relaxamus. Aqua calida et frigida, unctores qui nos ungunt... estne interesting?",
-                english: "The baths are not just for washing! There we socialize, do business, and relax. Hot and cold water, ointment-rubbers who massage us... is it interesting?"
+                latin: "Thermae non solum ad lavandum sunt! Ibi socializamus, negotia agimus, et relaxamus. Aqua calida et frigida, unctores qui nos ungunt... estne interesting, {name}?",
+                english: "The baths are not just for washing! There we socialize, do business, and relax. Hot and cold water, ointment-rubbers who massage us... is it interesting, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Valde interesting!", 
-                    english: "Very interesting!",
+                    latin: "Valde interesting est!", 
+                    english: "It's very interesting!",
                     nextStep: 10
                 },
                 { 
-                    latin: "Narra plus", 
-                    english: "Tell me more",
+                    latin: "Narra plus de thermis", 
+                    english: "Tell me more about the baths",
                     nextStep: 10
                 },
                 { 
-                    latin: "De socializatione", 
-                    english: "About socialization",
+                    latin: "De socializatione disco", 
+                    english: "I want to learn about socialization",
                     nextStep: 10
                 }
             ]
@@ -141,23 +142,23 @@ const conversationSystem = {
         {
             id: 6,
             livia: {
-                latin: "Cena Romana tempus sociale est! Pultem, carnes, pisces, et multas legumes edimus. Cum amicus recumbimus et diu colloquimur. Amasne cenare cum amicis?",
-                english: "Roman dinner is social time! We eat porridge, meats, fish, and many vegetables. We recline with friends and chat for a long time. Do you like dining with friends?"
+                latin: "Cena Romana tempus sociale est! Pultem, carnes, pisces, et multas legumes edimus. Cum amicus recumbimus et diu colloquimur. Amasne cenare cum amicis, {name}?",
+                english: "Roman dinner is social time! We eat porridge, meats, fish, and many vegetables. We recline with friends and chat for a long time. Do you like dining with friends, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Ita, amo", 
-                    english: "Yes, I love it",
+                    latin: "Ita, cenam cum amicis amo", 
+                    english: "Yes, I love dining with friends",
                     nextStep: 11
                 },
                 { 
-                    latin: "Aliquando", 
-                    english: "Sometimes",
+                    latin: "Aliquando ceno cum amicis", 
+                    english: "Sometimes I dine with friends",
                     nextStep: 11
                 },
                 { 
-                    latin: "Non saepe", 
-                    english: "Not often",
+                    latin: "Non saepe ceno cum amicis", 
+                    english: "I don't often dine with friends",
                     nextStep: 11
                 }
             ]
@@ -167,8 +168,8 @@ const conversationSystem = {
         {
             id: 7,
             livia: {
-                latin: "Mercatores omnia vendunt! Olivas ex Hispania, serica ex Sinarum, aromata ex India... Roma totum mundum adit. Nonne mirabile est?",
-                english: "Merchants sell everything! Olives from Spain, silk from China, spices from India... Rome reaches the whole world. Isn't it wonderful?"
+                latin: "Mercatores omnia vendunt! Olivas ex Hispania, serica ex Sinarum, aromata ex India... Roma totum mundum adit. Nonne mirabile est, {name}?",
+                english: "Merchants sell everything! Olives from Spain, silk from China, spices from India... Rome reaches the whole world. Isn't it wonderful, {name}?"
             },
             userOptions: [
                 { 
@@ -177,13 +178,13 @@ const conversationSystem = {
                     nextStep: 12
                 },
                 { 
-                    latin: "Roma potens est", 
-                    english: "Rome is powerful",
+                    latin: "Roma valde potens est", 
+                    english: "Rome is very powerful",
                     nextStep: 12
                 },
                 { 
-                    latin: "De olivis", 
-                    english: "About olives",
+                    latin: "De mercatoribus plus disco", 
+                    english: "I want to learn more about merchants",
                     nextStep: 12
                 }
             ]
@@ -193,23 +194,23 @@ const conversationSystem = {
         {
             id: 8,
             livia: {
-                latin: "Senatores de republica disputant! In Curia, leges creant et de bello paceque decernunt. Potestas magna est in eorum manibus. Visne scire quomodo hoc fit?",
-                english: "Senators debate about the republic! In the Senate House, they create laws and decide about war and peace. Great power is in their hands. Do you want to know how this happens?"
+                latin: "Senatores de republica disputant! In Curia, leges creant et de bello paceque decernunt. Potestas magna est in eorum manibus. Visne scire quomodo hoc fit, {name}?",
+                english: "Senators debate about the republic! In the Senate House, they create laws and decide about war and peace. Great power is in their hands. Do you want to know how this happens, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Certe volo", 
-                    english: "Certainly I want to",
+                    latin: "Certe scire volo", 
+                    english: "Certainly I want to know",
                     nextStep: 13
                 },
                 { 
-                    latin: "Est interesting", 
-                    english: "It's interesting",
+                    latin: "Est valde interesting", 
+                    english: "It's very interesting",
                     nextStep: 13
                 },
                 { 
-                    latin: "Non multum curo", 
-                    english: "I don't care much",
+                    latin: "De aliis rebus narra", 
+                    english: "Tell me about other things",
                     nextStep: 14
                 }
             ]
@@ -219,23 +220,23 @@ const conversationSystem = {
         {
             id: 9,
             livia: {
-                latin: "In foro cum amicis colloquor! De vita, de philosophia, de poetis... tempus felix est. Habesne amicos cum quibus de profundis rebus loqueris?",
-                english: "In the forum I chat with friends! About life, philosophy, poets... it's happy time. Do you have friends with whom you talk about deep things?"
+                latin: "In foro cum amicis colloquor! De vita, de philosophia, de poetis... tempus felix est. Habesne amicos cum quibus de profundis rebus loqueris, {name}?",
+                english: "In the forum I chat with friends! About life, philosophy, poets... it's happy time. Do you have friends with whom you talk about deep things, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Ita, habeo", 
-                    english: "Yes, I have",
+                    latin: "Ita, amicos habeo", 
+                    english: "Yes, I have friends",
                     nextStep: 15
                 },
                 { 
-                    latin: "Non multos", 
-                    english: "Not many",
+                    latin: "Non multos amicos habeo", 
+                    english: "I don't have many friends",
                     nextStep: 15
                 },
                 { 
-                    latin: "Aliquando", 
-                    english: "Sometimes",
+                    latin: "Aliquando cum amicis loquor", 
+                    english: "Sometimes I talk with friends",
                     nextStep: 15
                 }
             ]
@@ -245,23 +246,23 @@ const conversationSystem = {
         {
             id: 10,
             livia: {
-                latin: "In thermis, omnes classes sociales conveniunt! Pauperes et divites, servii et liberi... aqua omnes aequat. Hoc democratiam Romanam repraesentat, nonne?",
-                english: "In the baths, all social classes meet! Poor and rich, slaves and free... water makes everyone equal. This represents Roman democracy, doesn't it?"
+                latin: "In thermis, omnes classes sociales conveniunt! Pauperes et divites, servii et liberi... aqua omnes aequat. Hoc democratiam Romanam repraesentat, nonne, {name}?",
+                english: "In the baths, all social classes meet! Poor and rich, slaves and free... water makes everyone equal. This represents Roman democracy, doesn't it, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Ita, certe!", 
-                    english: "Yes, certainly!",
+                    latin: "Ita, certe repraesentat!", 
+                    english: "Yes, it certainly represents it!",
                     nextStep: 16
                 },
                 { 
-                    latin: "Idea interesting", 
-                    english: "Interesting idea",
+                    latin: "Idea interesting est", 
+                    english: "The idea is interesting",
                     nextStep: 16
                 },
                 { 
-                    latin: "Non cogitaveram", 
-                    english: "I hadn't thought of that",
+                    latin: "Non cogitaveram de hoc", 
+                    english: "I hadn't thought about this",
                     nextStep: 16
                 }
             ]
@@ -271,8 +272,8 @@ const conversationSystem = {
         {
             id: 11,
             livia: {
-                latin: "Cicero dicit: 'Amicitia res plurimas continet.' Nihil sine amicis iucundum est. Quid sentis de amicitia?",
-                english: "Cicero says: 'Friendship contains very many things.' Nothing is pleasant without friends. What do you feel about friendship?"
+                latin: "Cicero dicit: 'Amicitia res plurimas continet.' Nihil sine amicis iucundum est. Quid sentis de amicitia, {name}?",
+                english: "Cicero says: 'Friendship contains very many things.' Nothing is pleasant without friends. What do you feel about friendship, {name}?"
             },
             userOptions: [
                 { 
@@ -281,13 +282,13 @@ const conversationSystem = {
                     nextStep: 17
                 },
                 { 
-                    latin: "Amici importantes sunt", 
-                    english: "Friends are important",
+                    latin: "Amici valde importantes sunt", 
+                    english: "Friends are very important",
                     nextStep: 17
                 },
                 { 
-                    latin: "Difficile est", 
-                    english: "It's difficult",
+                    latin: "Amicitia difficilis est", 
+                    english: "Friendship is difficult",
                     nextStep: 17
                 }
             ]
@@ -297,23 +298,23 @@ const conversationSystem = {
         {
             id: 12,
             livia: {
-                latin: "Mercatores narrant mirabilia! Elephantos in Africa, pyramides in Aegypto, dracones in India... Roma totum mundum novit. Visne audire de his mirabilibus?",
-                english: "Merchants tell wonders! Elephants in Africa, pyramids in Egypt, dragons in India... Rome knows the whole world. Do you want to hear about these wonders?"
+                latin: "Mercatores narrant mirabilia! Elephantos in Africa, pyramides in Aegypto, dracones in India... Roma totum mundum novit. Visne audire de his mirabilibus, {name}?",
+                english: "Merchants tell wonders! Elephants in Africa, pyramids in Egypt, dragons in India... Rome knows the whole world. Do you want to hear about these wonders, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Maxime volo!", 
-                    english: "I really want to!",
+                    latin: "Maxime audire volo!", 
+                    english: "I really want to hear!",
                     nextStep: 18
                 },
                 { 
-                    latin: "De draconibus", 
-                    english: "About dragons",
+                    latin: "De draconibus narra", 
+                    english: "Tell me about dragons",
                     nextStep: 18
                 },
                 { 
-                    latin: "De elephantis", 
-                    english: "About elephants",
+                    latin: "De elephantis quaeso", 
+                    english: "About elephants, please",
                     nextStep: 18
                 }
             ]
@@ -323,8 +324,8 @@ const conversationSystem = {
         {
             id: 13,
             livia: {
-                latin: "Senatores leges creant! Primo, de re disputant; deinde, sententias ferunt; postremo, Caesari leges offerunt. Ordo et ratio in omnibus! Quid de hoc ordine sentis?",
-                english: "Senators create laws! First, they debate the matter; then, they cast votes; finally, they offer laws to Caesar. Order and reason in everything! What do you feel about this order?"
+                latin: "Senatores leges creant! Primo, de re disputant; deinde, sententias ferunt; postremo, Caesari leges offerunt. Ordo et ratio in omnibus! Quid de hoc ordine sentis, {name}?",
+                english: "Senators create laws! First, they debate the matter; then, they cast votes; finally, they offer laws to Caesar. Order and reason in everything! What do you feel about this order, {name}?"
             },
             userOptions: [
                 { 
@@ -333,13 +334,13 @@ const conversationSystem = {
                     nextStep: 19
                 },
                 { 
-                    latin: "Sapienter", 
-                    english: "Wisely",
+                    latin: "Sapienter ordinant", 
+                    english: "They order wisely",
                     nextStep: 19
                 },
                 { 
-                    latin: "Complicatum est", 
-                    english: "It's complicated",
+                    latin: "Ordo complicatus est", 
+                    english: "The order is complicated",
                     nextStep: 19
                 }
             ]
@@ -349,23 +350,23 @@ const conversationSystem = {
         {
             id: 14,
             livia: {
-                latin: "Intellegeo. Non omnes politica amant. Fortasse de poetis aut de philosophia loquamur? Quid tibi placet?",
-                english: "I understand. Not everyone loves politics. Perhaps we should talk about poets or philosophy? What do you like?"
+                latin: "Intellegeo. Non omnes politica amant. Fortasse de poetis aut de philosophia loquamur? Quid tibi placet, {name}?",
+                english: "I understand. Not everyone loves politics. Perhaps we should talk about poets or philosophy? What do you like, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "De poetis", 
-                    english: "About poets",
+                    latin: "De poetis disco", 
+                    english: "I want to learn about poets",
                     nextStep: 20
                 },
                 { 
-                    latin: "De philosophia", 
-                    english: "About philosophy",
+                    latin: "De philosophia quaeso", 
+                    english: "About philosophy, please",
                     nextStep: 21
                 },
                 { 
-                    latin: "De arte", 
-                    english: "About art",
+                    latin: "De arte Romana narra", 
+                    english: "Tell me about Roman art",
                     nextStep: 22
                 }
             ]
@@ -375,23 +376,23 @@ const conversationSystem = {
         {
             id: 15,
             livia: {
-                latin: "Amici veri rari sunt! Ego habeo paucos amicos fideles. Cum eis de omni re loquor. In vita tua, quis est amicus verus?",
-                english: "True friends are rare! I have a few faithful friends. With them I talk about everything. In your life, who is a true friend?"
+                latin: "Amici veri rari sunt! Ego habeo paucos amicos fideles. Cum eis de omni re loquor. In vita tua, quis est amicus verus, {name}?",
+                english: "True friends are rare! I have a few faithful friends. With them I talk about everything. In your life, who is a true friend, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Familia mea", 
-                    english: "My family",
+                    latin: "Familia mea amica est", 
+                    english: "My family is my friend",
                     nextStep: 23
                 },
                 { 
-                    latin: "Amicus antiquus", 
-                    english: "An old friend",
+                    latin: "Amicus antiquus verus est", 
+                    english: "An old friend is true",
                     nextStep: 23
                 },
                 { 
-                    latin: "Nondum inveni", 
-                    english: "I haven't found one yet",
+                    latin: "Nondum amicum verum inveni", 
+                    english: "I haven't found a true friend yet",
                     nextStep: 23
                 }
             ]
@@ -401,23 +402,23 @@ const conversationSystem = {
         {
             id: 16,
             livia: {
-                latin: "Aqua omnes aequat! In thermis, senator et servus in eadem aqua lavant. Hoc rarum est in mundo, nonne? Quid de hac aequalitate sentis?",
-                english: "Water makes everyone equal! In the baths, a senator and a slave bathe in the same water. This is rare in the world, isn't it? What do you feel about this equality?"
+                latin: "Aqua omnes aequat! In thermis, senator et servus in eadem aqua lavant. Hoc rarum est in mundo, nonne, {name}? Quid de hac aequalitate sentis?",
+                english: "Water makes everyone equal! In the baths, a senator and a slave bathe in the same water. This is rare in the world, isn't it, {name}? What do you feel about this equality?"
             },
             userOptions: [
                 { 
-                    latin: "Pulchra idea", 
-                    english: "Beautiful idea",
+                    latin: "Pulchra idea est", 
+                    english: "It's a beautiful idea",
                     nextStep: 24
                 },
                 { 
-                    latin: "Rara in mundo", 
-                    english: "Rare in the world",
+                    latin: "Rara in mundo est", 
+                    english: "It's rare in the world",
                     nextStep: 24
                 },
                 { 
-                    latin: "Non perfecta", 
-                    english: "Not perfect",
+                    latin: "Non perfecta aequalitas est", 
+                    english: "It's not perfect equality",
                     nextStep: 24
                 }
             ]
@@ -427,18 +428,18 @@ const conversationSystem = {
         {
             id: 17,
             livia: {
-                latin: "Seneca dicit: 'Amicus certus in re incerta cernitur.' In difficultatibus, amici veri apparent. Experitusne es hoc in vita tua?",
-                english: "Seneca says: 'A sure friend is discerned in an unsure matter.' In difficulties, true friends appear. Have you experienced this in your life?"
+                latin: "Seneca dicit: 'Amicus certus in re incerta cernitur.' In difficultatibus, amici veri apparent. Experitusne es hoc in vita tua, {name}?",
+                english: "Seneca says: 'A sure friend is discerned in an unsure matter.' In difficulties, true friends appear. Have you experienced this in your life, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Ita, experitus sum", 
+                    latin: "Ita, expertus sum", 
                     english: "Yes, I have experienced it",
                     nextStep: 25
                 },
                 { 
-                    latin: "Non dum", 
-                    english: "Not yet",
+                    latin: "Non dum expertus sum", 
+                    english: "I haven't experienced it yet",
                     nextStep: 25
                 },
                 { 
@@ -453,23 +454,23 @@ const conversationSystem = {
         {
             id: 18,
             livia: {
-                latin: "Mercatores narrant de Sphinx in Aegypto, de Hanging Gardens in Babylone, de Colosso Rhodi... Mundus plenus est mirabilium! Visne aliquando haec videre?",
-                english: "Merchants tell about the Sphinx in Egypt, the Hanging Gardens in Babylon, the Colossus of Rhodes... The world is full of wonders! Do you want to see these someday?"
+                latin: "Mercatores narrant de Sphinge in Aegypto, de Hanging Gardens in Babylone, de Colosso Rhodi... Mundus plenus est mirabilium! Visne aliquando haec videre, {name}?",
+                english: "Merchants tell about the Sphinx in Egypt, the Hanging Gardens in Babylon, the Colossus of Rhodes... The world is full of wonders! Do you want to see these someday, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Maxime cupio!", 
-                    english: "I really desire to!",
+                    latin: "Maxime videre cupio!", 
+                    english: "I really desire to see them!",
                     nextStep: 26
                 },
                 { 
-                    latin: "Forsitan", 
-                    english: "Perhaps",
+                    latin: "Forsitan videbo", 
+                    english: "Perhaps I will see them",
                     nextStep: 26
                 },
                 { 
-                    latin: "Difficile est", 
-                    english: "It's difficult",
+                    latin: "Difficile est videre", 
+                    english: "It's difficult to see them",
                     nextStep: 26
                 }
             ]
@@ -479,23 +480,23 @@ const conversationSystem = {
         {
             id: 19,
             livia: {
-                latin: "Ordo et lex fundamenta societatis sunt! Sine lege, chaos regnat. In patria tua, quomodo leges creantur? Similiterne an diversimode?",
-                english: "Order and law are the foundations of society! Without law, chaos reigns. In your country, how are laws created? Similarly or differently?"
+                latin: "Ordo et lex fundamenta societatis sunt! Sine lege, chaos regnat. In patria tua, quomodo leges creantur? Similiterne an diversimode, {name}?",
+                english: "Order and law are the foundations of society! Without law, chaos reigns. In your country, how are laws created? Similarly or differently, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Similiter", 
-                    english: "Similarly",
+                    latin: "Similiter creantur", 
+                    english: "They are created similarly",
                     nextStep: 27
                 },
                 { 
-                    latin: "Diversimode", 
-                    english: "Differently",
+                    latin: "Diversimode creantur", 
+                    english: "They are created differently",
                     nextStep: 27
                 },
                 { 
-                    latin: "Nescio", 
-                    english: "I don't know",
+                    latin: "Nescio quomodo creantur", 
+                    english: "I don't know how they are created",
                     nextStep: 27
                 }
             ]
@@ -505,23 +506,23 @@ const conversationSystem = {
         {
             id: 20,
             livia: {
-                latin: "Poetae Romani magni sunt! Vergilius Aeneidem scripsit, Ovidius Metamorphoses, Horatius carmina... Quem poetam praefers?",
-                english: "Roman poets are great! Virgil wrote the Aeneid, Ovid the Metamorphoses, Horace poems... Which poet do you prefer?"
+                latin: "Poetae Romani magni sunt! Vergilius Aeneidem scripsit, Ovidius Metamorphoses, Horatius carmina... Quem poetam praefers, {name}?",
+                english: "Roman poets are great! Virgil wrote the Aeneid, Ovid the Metamorphoses, Horace poems... Which poet do you prefer, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Vergilius", 
-                    english: "Virgil",
+                    latin: "Vergilium praefero", 
+                    english: "I prefer Virgil",
                     nextStep: 28
                 },
                 { 
-                    latin: "Ovidius", 
-                    english: "Ovid",
+                    latin: "Ovidium praefero", 
+                    english: "I prefer Ovid",
                     nextStep: 28
                 },
                 { 
-                    latin: "Horatius", 
-                    english: "Horace",
+                    latin: "Horatium praefero", 
+                    english: "I prefer Horace",
                     nextStep: 28
                 }
             ]
@@ -531,23 +532,23 @@ const conversationSystem = {
         {
             id: 21,
             livia: {
-                latin: "Philosophia Romana practica est! Seneca, Cicero, Marcus Aurelius... omnes de vita bona docent. Quae sententia philosophica tibi placet?",
-                english: "Roman philosophy is practical! Seneca, Cicero, Marcus Aurelius... all teach about the good life. Which philosophical saying do you like?"
+                latin: "Philosophia Romana practica est! Seneca, Cicero, Marcus Aurelius... omnes de vita bona docent. Quae sententia philosophica tibi placet, {name}?",
+                english: "Roman philosophy is practical! Seneca, Cicero, Marcus Aurelius... all teach about the good life. Which philosophical saying do you like, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Vivere est cogitare", 
-                    english: "To live is to think",
+                    latin: "'Vivere est cogitare' placet", 
+                    english: "I like 'To live is to think'",
                     nextStep: 29
                 },
                 { 
-                    latin: "Carpe diem", 
-                    english: "Seize the day",
+                    latin: "'Carpe diem' amo", 
+                    english: "I love 'Seize the day'",
                     nextStep: 29
                 },
                 { 
-                    latin: "Temperantia virtus", 
-                    english: "Moderation is virtue",
+                    latin: "'Temperantia virtus' placet", 
+                    english: "I like 'Moderation is virtue'",
                     nextStep: 29
                 }
             ]
@@ -557,23 +558,23 @@ const conversationSystem = {
         {
             id: 22,
             livia: {
-                latin: "Ars Romana magnifica est! Statuae, picturae, mosaica... omnia pulchra. In villa mea, multa opera artis habeo. Amasne artem?",
-                english: "Roman art is magnificent! Statues, paintings, mosaics... all beautiful. In my villa, I have many works of art. Do you love art?"
+                latin: "Ars Romana magnifica est! Statuae, picturae, mosaica... omnia pulchra. In villa mea, multa opera artis habeo. Amasne artem, {name}?",
+                english: "Roman art is magnificent! Statues, paintings, mosaics... all beautiful. In my villa, I have many works of art. Do you love art, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Ita, amo", 
-                    english: "Yes, I love it",
+                    latin: "Ita, artem amo", 
+                    english: "Yes, I love art",
                     nextStep: 30
                 },
                 { 
-                    latin: "Aliquando", 
-                    english: "Sometimes",
+                    latin: "Aliquando artem amo", 
+                    english: "Sometimes I love art",
                     nextStep: 30
                 },
                 { 
-                    latin: "Non multum", 
-                    english: "Not much",
+                    latin: "Non multum artem amo", 
+                    english: "I don't love art much",
                     nextStep: 30
                 }
             ]
@@ -588,18 +589,18 @@ const conversationSystem = {
             },
             userOptions: [
                 { 
-                    latin: "De vita tua", 
-                    english: "About your life",
+                    latin: "De vita tua quaero", 
+                    english: "I ask about your life",
                     nextStep: 31
                 },
                 { 
-                    latin: "De futuro", 
-                    english: "About the future",
+                    latin: "De futuro disco", 
+                    english: "I want to learn about the future",
                     nextStep: 32
                 },
                 { 
-                    latin: "Nil habeo", 
-                    english: "I have nothing",
+                    latin: "Nil habeo quaestionum", 
+                    english: "I have no questions",
                     nextStep: 33
                 }
             ]
@@ -609,23 +610,23 @@ const conversationSystem = {
         {
             id: 24,
             livia: {
-                latin: "Aequalitas difficile est, sed necessaria! Forsitan aliquando omnes homines aequales erunt. Quid speras de futuro mundi?",
-                english: "Equality is difficult, but necessary! Perhaps someday all people will be equal. What do you hope for the future of the world?"
+                latin: "Aequalitas difficile est, sed necessaria! Forsitan aliquando omnes homines aequales erunt. Quid speras de futuro mundi, {name}?",
+                english: "Equality is difficult, but necessary! Perhaps someday all people will be equal. What do you hope for the future of the world, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Pacem spero", 
-                    english: "I hope for peace",
+                    latin: "Pacem in mundo spero", 
+                    english: "I hope for peace in the world",
                     nextStep: 34
                 },
                 { 
-                    latin: "Aequalitatem", 
-                    english: "Equality",
+                    latin: "Aequalitatem spero", 
+                    english: "I hope for equality",
                     nextStep: 34
                 },
                 { 
-                    latin: "Nescio", 
-                    english: "I don't know",
+                    latin: "Nescio quid sperem", 
+                    english: "I don't know what I hope",
                     nextStep: 34
                 }
             ]
@@ -640,18 +641,18 @@ const conversationSystem = {
             },
             userOptions: [
                 { 
-                    latin: "Patientiam", 
-                    english: "Patience",
+                    latin: "Patientiam docuit", 
+                    english: "It taught me patience",
                     nextStep: 35
                 },
                 { 
-                    latin: "Amicitiam", 
-                    english: "Friendship",
+                    latin: "Amicitiam docuit", 
+                    english: "It taught me friendship",
                     nextStep: 35
                 },
                 { 
-                    latin: "Fortitudinem", 
-                    english: "Courage",
+                    latin: "Fortitudinem docuit", 
+                    english: "It taught me courage",
                     nextStep: 35
                 }
             ]
@@ -661,47 +662,65 @@ const conversationSystem = {
         {
             id: 26,
             livia: {
-                latin: "Iter facere animum aperit! Spero te multas terras visurum. Nunc, colloquium nostrum finire debemus. Vale, {name}!",
-                english: "Traveling opens the mind! I hope you see many lands. Now, we must end our conversation. Farewell, {name}!"
+                latin: "Iter facere animum aperit! Spero te multas terras visurum. Nunc, colloquium nostrum finire debemus. Vale, {name}! Cras revertare!",
+                english: "Traveling opens the mind! I hope you see many lands. Now, we must end our conversation. Farewell, {name}! Return tomorrow!"
             },
             userOptions: [
                 { 
-                    latin: "Vale, Livia!", 
-                    english: "Farewell, Livia!",
+                    latin: "Vale, Livia! Gratias!", 
+                    english: "Farewell, Livia! Thank you!",
                     nextStep: 0
                 },
                 { 
-                    latin: "Gratias!", 
-                    english: "Thank you!",
+                    latin: "Gratias tibi ago! Vale!", 
+                    english: "I thank you! Farewell!",
                     nextStep: 0
                 },
                 { 
-                    latin: "Cras revertar!", 
-                    english: "I'll return tomorrow!",
+                    latin: "Cras revertar! Vale!", 
+                    english: "I'll return tomorrow! Farewell!",
                     nextStep: 0
                 }
             ]
         }
-        // Note: Steps 27-35 would continue the pattern, but we stop at 26 for this example
-        // You can add more steps following the same structure
+        // Additional steps can be added following the same pattern
     ],
 
-    // SIMPLE RESPONSE HANDLER - Direct mapping
+    // IMPROVED RESPONSE HANDLER WITH NAME EXTRACTION
     getResponse(userMessage, currentContext) {
         const currentStep = this.conversationSteps[this.currentStep];
         
-        // Extract name if in first step
+        // NAME EXTRACTION: Multiple patterns to catch the user's name
         if (this.currentStep === 0 && !currentContext.userName) {
-            const nameMatch = userMessage.match(/([A-Za-z]{2,})/);
-            if (nameMatch && nameMatch[1]) {
-                currentContext.userName = nameMatch[1];
+            const namePatterns = [
+                /mihi nomen (est )?([A-Za-z]+)/i,
+                /nomen mihi est ([A-Za-z]+)/i,
+                /ego sum ([A-Za-z]+)/i,
+                /my name is ([A-Za-z]+)/i,
+                /I am ([A-Za-z]+)/i,
+                /^([A-Za-z]{2,})$/i  // Just the name itself
+            ];
+            
+            for (const pattern of namePatterns) {
+                const match = userMessage.match(pattern);
+                if (match) {
+                    // Get the name from the appropriate capture group
+                    const name = match[2] || match[1];
+                    if (name) {
+                        currentContext.userName = name;
+                        console.log("Name extracted:", currentContext.userName);
+                        break;
+                    }
+                }
             }
         }
 
         // Find the selected option
-        let selectedOption = currentStep.userOptions.find(option => 
-            option.latin === userMessage || option.english === userMessage
-        ) || currentStep.userOptions[0];
+        let selectedOption = currentStep.userOptions.find(option => {
+            // Remove [Nomen] placeholder for matching
+            const cleanLatin = option.latin.replace(/\[Nomen\]/g, '').trim();
+            return userMessage.includes(cleanLatin) || option.english === userMessage;
+        }) || currentStep.userOptions[0];
 
         // Move to next step
         this.currentStep = selectedOption.nextStep;
@@ -718,8 +737,8 @@ const conversationSystem = {
             latin: liviaMessage.latin,
             english: liviaMessage.english,
             suggestions: nextStep.userOptions.map(opt => ({
-                latin: opt.latin,
-                english: opt.english
+                latin: opt.latin.replace(/\[Nomen\]/g, currentContext.userName || '[Name]'),
+                english: opt.english.replace(/\[Name\]/g, currentContext.userName || '[Name]')
             }))
         };
     },
@@ -738,11 +757,14 @@ const conversationSystem = {
     },
 
     // Get suggestions for current step
-    getCurrentSuggestions() {
-        return this.conversationSteps[this.currentStep]?.userOptions.map(opt => ({
-            latin: opt.latin,
-            english: opt.english
-        })) || [];
+    getCurrentSuggestions(currentContext) {
+        const currentStep = this.conversationSteps[this.currentStep];
+        if (!currentStep || !currentStep.userOptions) return [];
+        
+        return currentStep.userOptions.map(opt => ({
+            latin: opt.latin.replace(/\[Nomen\]/g, currentContext.userName || '[Name]'),
+            english: opt.english.replace(/\[Name\]/g, currentContext.userName || '[Name]')
+        }));
     },
 
     resetConversation() {
@@ -755,4 +777,4 @@ const conversationSystem = {
 };
 
 // Initialize suggestions
-const suggestedResponsesData = conversationSystem.getCurrentSuggestions();
+let suggestedResponsesData = [];
