@@ -1,4 +1,4 @@
-// conversation-data.js - FIXED BUBBLE DISPLAY
+// conversation-data.js - FIXED BUBBLE DISPLAY & EXTENDED CONVERSATION
 // Proper name extraction + Always show relevant bubbles
 
 const conversationSystem = {
@@ -16,14 +16,8 @@ const conversationSystem = {
             },
             userOptions: [
                 { 
-                    latin: "Mihi nomen est...", 
-                    english: "My name is...",
-                    nextStep: 2,
-                    isNamePrompt: true
-                },
-                { 
-                    latin: "Nomen mihi est...", 
-                    english: "My name is...", 
+                    latin: "Type your name below...", 
+                    english: "Type your name below...",
                     nextStep: 2,
                     isNamePrompt: true
                 }
@@ -262,6 +256,206 @@ const conversationSystem = {
                     nextStep: 16
                 }
             ]
+        },
+
+        // ===== STEP 11: DINNER SOCIAL =====
+        {
+            id: 11,
+            livia: {
+                latin: "Cum amicis cenare est optimus modus ad socializandum! In triclinio recumbimus, cibum bonum sumimus, et de omni re colloquimur. Quid cenare cum amicis maxime amas, {name}?",
+                english: "Dining with friends is the best way to socialize! In the dining room we recline, eat good food, and chat about everything. What do you like most about dining with friends, {name}?"
+            },
+            userOptions: [
+                { 
+                    latin: "Cibum bonum amo", 
+                    english: "I love the good food",
+                    nextStep: 17
+                },
+                { 
+                    latin: "Colloquium cum amicis", 
+                    english: "The conversation with friends",
+                    nextStep: 17
+                },
+                { 
+                    latin: "Atmosphæra socialis", 
+                    english: "The social atmosphere",
+                    nextStep: 17
+                }
+            ]
+        },
+
+        // ===== STEP 12: ROMAN TRADE =====
+        {
+            id: 12,
+            livia: {
+                latin: "Mercatores Romani ad omnes mundi partes navigant! Ex Aegypto frumentum, ex Africa bestias, ex Germania sucum. Roma sine mercatoribus non esset tam dives. Visne scire quomodo navigant, {name}?",
+                english: "Roman merchants sail to all parts of the world! From Egypt grain, from Africa beasts, from Germany amber. Rome would not be so rich without merchants. Do you want to know how they sail, {name}?"
+            },
+            userOptions: [
+                { 
+                    latin: "Ita, de navigatione disco", 
+                    english: "Yes, I want to learn about sailing",
+                    nextStep: 18
+                },
+                { 
+                    latin: "De aliis mercibus narra", 
+                    english: "Tell me about other goods",
+                    nextStep: 18
+                },
+                { 
+                    latin: "De periculis navigationis", 
+                    english: "About the dangers of sailing",
+                    nextStep: 18
+                }
+            ]
+        },
+
+        // ===== STEP 13: SENATE PROCESS =====
+        {
+            id: 13,
+            livia: {
+                latin: "In senatu, senatores togam praetextam gerunt. Disputationes longae sunt, sed necessariae. Princeps senatus ordinat omnia. Estne simile huic systemati in tua patria, {name}?",
+                english: "In the senate, senators wear the toga praetexta. The debates are long, but necessary. The princeps senatus organizes everything. Is it similar to this system in your country, {name}?"
+            },
+            userOptions: [
+                { 
+                    latin: "Aliquantum simile est", 
+                    english: "It is somewhat similar",
+                    nextStep: 19
+                },
+                { 
+                    latin: "Valde diversum est", 
+                    english: "It is very different",
+                    nextStep: 19
+                },
+                { 
+                    latin: "Nescio systema meum", 
+                    english: "I don't know my system",
+                    nextStep: 19
+                }
+            ]
+        },
+
+        // ===== STEP 14: OTHER TOPICS =====
+        {
+            id: 14,
+            livia: {
+                latin: "De aliis rebus? Certē! In Roma multa interesting sunt: ludi gladiatorii, theatrum, poëtae, philosophi... Quid vis audire, {name}?",
+                english: "About other things? Certainly! In Rome many things are interesting: gladiator games, theater, poets, philosophers... What do you want to hear, {name}?"
+            },
+            userOptions: [
+                { 
+                    latin: "De ludis gladiatoriis", 
+                    english: "About gladiator games",
+                    nextStep: 20
+                },
+                { 
+                    latin: "De theatro Romano", 
+                    english: "About Roman theater",
+                    nextStep: 21
+                },
+                { 
+                    latin: "De philosophis", 
+                    english: "About philosophers",
+                    nextStep: 22
+                }
+            ]
+        },
+
+        // ===== STEP 15: FRIENDSHIP CONTINUED =====
+        {
+            id: 15,
+            livia: {
+                latin: "Amicitia Romana fundāmentum vitae bonae est. Cicero dixit: 'Amicitia nisi inter bonos esse non potest'. Quid de amicitia cogitas, {name}?",
+                english: "Roman friendship is the foundation of a good life. Cicero said: 'Friendship cannot exist except among good people'. What do you think about friendship, {name}?"
+            },
+            userOptions: [
+                { 
+                    latin: "Amicitia mihi maximi est", 
+                    english: "Friendship is very important to me",
+                    nextStep: 23
+                },
+                { 
+                    latin: "Amici sunt familia electa", 
+                    english: "Friends are chosen family",
+                    nextStep: 23
+                },
+                { 
+                    latin: "Difficile est amicos veros invenire", 
+                    english: "It's hard to find true friends",
+                    nextStep: 23
+                }
+            ]
+        },
+
+        // ===== STEP 16: BATH CULTURE CONTINUED =====
+        {
+            id: 16,
+            livia: {
+                latin: "In thermis non solum lavamus, sed etiam exercemus! In palaestra ludimus pilā, currimus, et luctamur. Postea in calidario et frigidario lavamus. Visne plus de exercitiis Romānis audire, {name}?",
+                english: "In the baths we not only wash, but also exercise! In the palaestra we play ball, run, and wrestle. Afterwards we wash in the hot and cold rooms. Do you want to hear more about Roman exercises, {name}?"
+            },
+            userOptions: [
+                { 
+                    latin: "Ita, de exercitiis disco", 
+                    english: "Yes, I want to learn about exercises",
+                    nextStep: 24
+                },
+                { 
+                    latin: "De architectura thermarum", 
+                    english: "About the bath architecture",
+                    nextStep: 24
+                },
+                { 
+                    latin: "Satis de thermis audivi", 
+                    english: "I've heard enough about baths",
+                    nextStep: 14
+                }
+            ]
+        },
+
+        // ===== STEP 17-24: CONTINUED CONVERSATION PATHS =====
+        {
+            id: 17,
+            livia: {
+                latin: "Cena cum amicis est vera voluptas! Nos Romani multas horas cenamus - interdum tota nocte! Poëtae recitant, musici canunt... Estne simile in tua cultura, {name}?",
+                english: "Dinner with friends is true pleasure! We Romans dine for many hours - sometimes all night! Poets recite, musicians sing... Is it similar in your culture, {name}?"
+            },
+            userOptions: [
+                { 
+                    latin: "Simile est", 
+                    english: "It is similar",
+                    nextStep: 25
+                },
+                { 
+                    latin: "Aliquantum diversum", 
+                    english: "Somewhat different",
+                    nextStep: 25
+                },
+                { 
+                    latin: "Narra plus de cenis Romanis", 
+                    english: "Tell me more about Roman dinners",
+                    nextStep: 25
+                }
+            ]
+        },
+
+        // Add more steps here to continue the conversation...
+        // For now, let's create a graceful ending point
+        {
+            id: 25,
+            livia: {
+                latin: "Gratias tibi ago, {name}, pro hoc colloquio iucundo! Spero te aliquid novi de Roma antiqua discere. Semper bene vale et, si vis, iterum me visita!",
+                english: "Thank you, {name}, for this pleasant conversation! I hope you learned something new about ancient Rome. Farewell always, and if you wish, visit me again!"
+            },
+            userOptions: [
+                { 
+                    latin: "Gratias tibi! Valē!", 
+                    english: "Thank you! Goodbye!",
+                    nextStep: 0,
+                    isRestart: true
+                }
+            ]
         }
     ],
 
@@ -271,27 +465,21 @@ const conversationSystem = {
         
         console.log("Current step:", this.currentStep, "User message:", userMessage);
         
-        // NAME EXTRACTION: Multiple patterns to catch the user's name
+        // SPECIAL HANDLING FOR NAME INPUT
         if (this.currentStep === 0 && !currentContext.userName) {
-            const namePatterns = [
-                /mihi nomen (est )?([A-Za-z]+)/i,
-                /nomen mihi est ([A-Za-z]+)/i,
-                /ego sum ([A-Za-z]+)/i,
-                /my name is ([A-Za-z]+)/i,
-                /I am ([A-Za-z]+)/i,
-                /^([A-Za-z]{2,})$/i  // Just the name itself
-            ];
-            
-            for (const pattern of namePatterns) {
-                const match = userMessage.match(pattern);
-                if (match) {
-                    // Get the name from the appropriate capture group
-                    const name = match[2] || match[1];
-                    if (name) {
-                        currentContext.userName = name;
-                        console.log("Name extracted:", currentContext.userName);
-                        break;
-                    }
+            // For step 0, any reasonable text is treated as a name
+            if (userMessage.trim().length > 1 && 
+                !userMessage.toLowerCase().includes("type your name") &&
+                !userMessage.toLowerCase().includes("...")) {
+                
+                // Simple name extraction - take the first word or the whole message
+                const nameMatch = userMessage.match(/^([A-Za-z]{2,})/);
+                if (nameMatch) {
+                    currentContext.userName = nameMatch[1];
+                    console.log("Name extracted:", currentContext.userName);
+                } else {
+                    // If no clear name, use first 10 characters
+                    currentContext.userName = userMessage.substring(0, 10).trim();
                 }
             }
         }
@@ -300,6 +488,9 @@ const conversationSystem = {
         let selectedOption = currentStep.userOptions[0]; // Default to first option
         
         for (const option of currentStep.userOptions) {
+            // Skip name prompt options for matching
+            if (option.isNamePrompt) continue;
+            
             // Clean the option texts for comparison
             const cleanLatin = option.latin.replace(/\.\.\./g, '').trim().toLowerCase();
             const cleanEnglish = option.english.replace(/\.\.\./g, '').trim().toLowerCase();
@@ -307,23 +498,31 @@ const conversationSystem = {
             
             // Check if user message contains the option text (either language)
             if (userMessageLower.includes(cleanLatin) || 
-                userMessageLower.includes(cleanEnglish) ||
-                (option.isNamePrompt && userMessageLower.length > 1)) {
+                userMessageLower.includes(cleanEnglish)) {
                 selectedOption = option;
                 break;
             }
         }
 
-        // Move to next step
-        this.currentStep = selectedOption.nextStep - 1; // Subtract 1 because steps are 1-indexed in the array
+        // Handle restart option
+        if (selectedOption.isRestart) {
+            this.currentStep = 0;
+            currentContext.userName = null;
+        } else {
+            // Move to next step (subtract 1 because steps are 1-indexed in the array)
+            this.currentStep = selectedOption.nextStep - 1;
+        }
+        
         const nextStep = this.conversationSteps[this.currentStep];
 
         if (!nextStep) {
             console.error("No next step found for:", selectedOption.nextStep);
+            // If no next step, restart conversation
+            this.currentStep = 0;
             return {
-                latin: "Error: No next conversation step found.",
-                english: "Error: No next conversation step found.",
-                suggestions: []
+                latin: "Gratias pro colloquio! Visne iterum colloqui?",
+                english: "Thanks for the conversation! Would you like to chat again?",
+                suggestions: this.conversationSteps[0].userOptions
             };
         }
 
@@ -341,7 +540,9 @@ const conversationSystem = {
                 opt.latin,
             english: currentContext.userName ? 
                 opt.english.replace(/{name}/g, currentContext.userName) : 
-                opt.english
+                opt.english,
+            isNamePrompt: opt.isNamePrompt || false,
+            isRestart: opt.isRestart || false
         }));
 
         console.log("Next step:", this.currentStep, "Suggestions:", nextSuggestions);
@@ -380,7 +581,8 @@ const conversationSystem = {
             english: currentContext.userName ? 
                 opt.english.replace(/{name}/g, currentContext.userName) : 
                 opt.english,
-            isNamePrompt: opt.isNamePrompt || false
+            isNamePrompt: opt.isNamePrompt || false,
+            isRestart: opt.isRestart || false
         }));
     },
 
