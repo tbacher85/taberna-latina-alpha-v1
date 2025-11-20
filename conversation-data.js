@@ -1,4 +1,4 @@
-// conversation-data.js - ADVANCED CONVERSATION SYSTEM
+// conversation-data.js - IMPROVED CONVERSATION SYSTEM
 const conversationSystem = {
     // Expanded conversation scenarios with multiple response options
     scenarios: {
@@ -19,13 +19,13 @@ const conversationSystem = {
         
         name_response: [
             {
-                triggers: ["name", "nomen", "call", "called"],
+                triggers: ["name", "nomen", "call", "called", "i am", "i'm"],
                 latin: "Salve [NAME]! Nomen pulchrum est. Unde venis?",
                 english: "Hello [NAME]! That's a beautiful name. Where are you from?",
                 nextTopic: 'origin'
             },
             {
-                triggers: ["name", "nomen"],
+                triggers: ["name", "nomen", "i am", "i'm"],
                 latin: "[NAME]... nomen gratum est! Quomodo te habes hodie?",
                 english: "[NAME]... what a pleasant name! How are you today?",
                 nextTopic: 'feeling'
@@ -34,19 +34,19 @@ const conversationSystem = {
         
         feeling: [
             {
-                triggers: ["good", "well", "fine", "bene", "happy", "great"],
+                triggers: ["good", "well", "fine", "bene", "happy", "great", "ok", "okay"],
                 latin: "Gaudeo te bene valere! Ego quoque valde bene me habeo. Hodie in horto meo ambulavi.",
                 english: "I'm glad you're well! I'm also doing very well. Today I walked in my garden.",
                 nextTopic: 'daily_life'
             },
             {
-                triggers: ["bad", "tired", "sad", "malus", "not well"],
+                triggers: ["bad", "tired", "sad", "malus", "not well", "exhausted"],
                 latin: "Me paenitet! Spero te melius fore cras. Saepe me adiuvar ambulatione in horto.",
                 english: "I'm sorry! I hope you'll be better tomorrow. Walking in the garden often helps me.",
                 nextTopic: 'daily_life'
             },
             {
-                triggers: ["curious", "interested", "excited"],
+                triggers: ["curious", "interested", "excited", "bored"],
                 latin: "Gaudium mihi est! Ego quoque sum curiosus de mundo. Visne de Roma audire?",
                 english: "That brings me joy! I'm also curious about the world. Would you like to hear about Rome?",
                 nextTopic: 'rome'
@@ -55,19 +55,19 @@ const conversationSystem = {
         
         origin: [
             {
-                triggers: ["rome", "italy", "italia", "roman", "romanus"],
+                triggers: ["rome", "italy", "italia", "roman", "romanus", "from rome"],
                 latin: "Tu es Romanus? Optimē! Ego in villa prope Romam habito. Amasne urbem?",
                 english: "You're Roman? Excellent! I live in a villa near Rome. Do you love the city?",
                 nextTopic: 'rome'
             },
             {
-                triggers: ["america", "europe", "asia", "africa", "germany", "spain", "france"],
+                triggers: ["america", "europe", "asia", "africa", "germany", "spain", "france", "britain", "from"],
                 latin: "O! Terra longinqua! Narra mihi de patria tua. Quomodo est vita ibi?",
                 english: "Oh! A distant land! Tell me about your country. What is life like there?",
                 nextTopic: 'comparison'
             },
             {
-                triggers: ["here", "near", "close"],
+                triggers: ["here", "near", "close", "nearby"],
                 latin: "Vicinus es! Spero te visitare Romam aliquando. Urbs magnifica est!",
                 english: "You're nearby! I hope you visit Rome sometime. The city is magnificent!",
                 nextTopic: 'rome'
@@ -76,28 +76,58 @@ const conversationSystem = {
         
         rome: [
             {
-                triggers: ["yes", "please", "tell", "roma", "city", "urbs"],
+                triggers: ["yes", "please", "tell", "roma", "city", "urbs", "rome", "about rome", "narra", "de roma"],
                 latin: "Roma urbs maxima est! Heri in Foro Romano fui. Mercatores, senatores, milites... omnes ibi sunt!",
                 english: "Rome is the greatest city! Yesterday I was in the Roman Forum. Merchants, senators, soldiers... everyone is there!",
                 nextTopic: 'roman_life'
             },
             {
-                triggers: ["no", "not", "maybe", "later"],
+                triggers: ["no", "not", "maybe", "later", "another time"],
                 latin: "Intellegeo. Saepe solitudinem amo. In villa mea libros Graecos lego. Amasne legere?",
                 english: "I understand. I often love solitude. In my villa I read Greek books. Do you like to read?",
                 nextTopic: 'hobbies'
             }
         ],
         
+        roman_life: [
+            {
+                triggers: ["forum", "foro", "mercatores", "senatores", "milites", "life", "vita", "roman life"],
+                latin: "In Foro cotidie multa fiunt. Mercatores olivas, vinum, vestes vendunt. Senatores de republica disputant. Et milites per vias ambulant.",
+                english: "Many things happen daily in the Forum. Merchants sell olives, wine, clothes. Senators debate about the republic. And soldiers walk through the streets.",
+                nextTopic: 'culture'
+            },
+            {
+                triggers: ["what", "how", "tell", "describe"],
+                latin: "Vita Romana varia est! Mane cibum sumimus, deinde aut in thermas aut in forum imus. Saepe amicos visimus et cenam paramus.",
+                english: "Roman life is varied! In the morning we eat food, then we go either to the baths or to the forum. We often visit friends and prepare dinner.",
+                nextTopic: 'daily_life'
+            }
+        ],
+        
+        culture: [
+            {
+                triggers: ["gods", "deos", "minos", "minerva", "worship", "religion"],
+                latin: "Romani multos deos colunt. Ego ipse Minervam, deam sapientiae, adoro. Habesne deos quos colis?",
+                english: "Romans worship many gods. I myself worship Minerva, the goddess of wisdom. Do you have gods that you worship?",
+                nextTopic: 'philosophy'
+            },
+            {
+                triggers: ["books", "librum", "reading", "legere", "greek", "graecos"],
+                latin: "Libros Graecos legere amo. Philosophia mihi placet. Stoicorum doctrinam studiosius lego. Quid de philosophia sentis?",
+                english: "I love reading Greek books. Philosophy pleases me. I study the teachings of the Stoics more diligently. What do you think about philosophy?",
+                nextTopic: 'philosophy'
+            }
+        ],
+        
         daily_life: [
             {
-                triggers: ["garden", "hortus", "walk", "flowers", "rosae"],
+                triggers: ["garden", "hortus", "walk", "flowers", "rosae", "plants"],
                 latin: "Hortus meus magnam voluptatem mihi dat. Rosae rubrae et lilium candidum habeo. Amasne flores?",
                 english: "My garden gives me great pleasure. I have red roses and white lilies. Do you like flowers?",
                 nextTopic: 'nature'
             },
             {
-                triggers: ["today", "hodie", "did", "do", "work"],
+                triggers: ["today", "hodie", "did", "do", "work", "fecisti"],
                 latin: "Hodie epistulas scripsi et cum servis de cena locuta sum. Cras ad thermas ire volo. Quid tu cras facere vis?",
                 english: "Today I wrote letters and spoke with the servants about dinner. Tomorrow I want to go to the baths. What do you want to do tomorrow?",
                 nextTopic: 'future'
@@ -106,19 +136,19 @@ const conversationSystem = {
         
         hobbies: [
             {
-                triggers: ["read", "books", "librum", "reading"],
+                triggers: ["read", "books", "librum", "reading", "legere"],
                 latin: "Optime! Ego philosophiam et poetas amo. Seneca et Vergilius mihi cordi sunt. Quem poetam legis?",
                 english: "Excellent! I love philosophy and poets. Seneca and Virgil are dear to me. Which poet do you read?",
                 nextTopic: 'literature'
             },
             {
-                triggers: ["music", "sing", "cantare", "dance", "saltare"],
+                triggers: ["music", "sing", "cantare", "dance", "saltare", "lyre", "citharam"],
                 latin: "Musica animam elevat! Ego ipse citharam tangere disco. Canisne aut saltas?",
                 english: "Music lifts the soul! I myself am learning to play the lyre. Do you sing or dance?",
                 nextTopic: 'arts'
             },
             {
-                triggers: ["sports", "exercise", "gymnasium", "run"],
+                triggers: ["sports", "exercise", "gymnasium", "run", "athletes", "circus"],
                 latin: "Corpus exercere salubre est! Ego in palaestra ambulare soleo. Athletas in Circo Maximo spectare amo.",
                 english: "Exercising the body is healthy! I usually walk in the wrestling school. I love watching athletes in the Circus Maximus.",
                 nextTopic: 'sports'
@@ -127,20 +157,18 @@ const conversationSystem = {
         
         nature: [
             {
-                triggers: ["flowers", "flores", "plants", "garden"],
+                triggers: ["flowers", "flores", "plants", "garden", "herbs", "herbas"],
                 latin: "Natura deorum donum est. In horto meo multas herbas medicinales colo. Scisne de virtutibus herbarium?",
                 english: "Nature is the gift of the gods. In my garden I grow many medicinal herbs. Do you know about the properties of herbs?",
                 nextTopic: 'medicine'
             },
             {
-                triggers: ["animals", "animalia", "dogs", "cats", "birds"],
+                triggers: ["animals", "animalia", "dogs", "cats", "birds", "pets"],
                 latin: "Animalia sunt comites boni. Ego catulum et aves in cavea habeo. Habesne animalia domestica?",
                 english: "Animals are good companions. I have a puppy and birds in a cage. Do you have pets?",
                 nextTopic: 'pets'
             }
         ],
-        
-        // ... and many more scenarios can be added
         
         default: [
             {
@@ -166,9 +194,11 @@ const conversationSystem = {
         ]
     },
 
-    // Advanced response selection based on user input
+    // Improved response selection with better matching
     getResponse(userMessage, currentContext) {
-        const message = userMessage.toLowerCase();
+        const message = userMessage.toLowerCase().trim();
+        
+        console.log("User message:", message); // Debug log
         
         // Extract name if provided
         if (!currentContext.userName) {
@@ -176,6 +206,7 @@ const conversationSystem = {
             if (nameMatch && nameMatch[1]) {
                 currentContext.userName = nameMatch[1];
                 currentContext.knowsName = true;
+                console.log("Extracted name:", currentContext.userName); // Debug log
             }
         }
         
@@ -191,6 +222,7 @@ const conversationSystem = {
                     if (score > highestScore) {
                         highestScore = score;
                         bestMatch = { topic, response };
+                        console.log("New best match:", topic, "score:", score); // Debug log
                     }
                 }
             }
@@ -203,10 +235,11 @@ const conversationSystem = {
             
             // Personalize with user's name
             if (currentContext.userName) {
-                finalResponse.latin = finalResponse.latin.replace('[NAME]', currentContext.userName);
-                finalResponse.english = finalResponse.english.replace('[NAME]', currentContext.userName);
+                finalResponse.latin = finalResponse.latin.replace(/\[NAME\]/g, currentContext.userName);
+                finalResponse.english = finalResponse.english.replace(/\[NAME\]/g, currentContext.userName);
             }
             
+            console.log("Selected response from topic:", bestMatch.topic); // Debug log
             return finalResponse;
         }
         
@@ -219,15 +252,17 @@ const conversationSystem = {
             const finalResponse = { ...randomResponse };
             
             if (currentContext.userName) {
-                finalResponse.latin = finalResponse.latin.replace('[NAME]', currentContext.userName);
-                finalResponse.english = finalResponse.english.replace('[NAME]', currentContext.userName);
+                finalResponse.latin = finalResponse.latin.replace(/\[NAME\]/g, currentContext.userName);
+                finalResponse.english = finalResponse.english.replace(/\[NAME\]/g, currentContext.userName);
             }
             
+            console.log("Selected response from current topic:", currentTopic); // Debug log
             return finalResponse;
         }
         
         // Fallback to default
         const randomDefault = this.scenarios.default[Math.floor(Math.random() * this.scenarios.default.length)];
+        console.log("Selected default response"); // Debug log
         return randomDefault;
     },
     
@@ -238,6 +273,8 @@ const conversationSystem = {
                 score += 1;
                 // Bonus for longer/more specific triggers
                 if (trigger.length > 5) score += 0.5;
+                // Extra bonus for exact phrase matches
+                if (message === trigger) score += 2;
             }
         }
         return score;
@@ -266,5 +303,7 @@ const suggestedResponsesData = [
     { latin: "Habesne animalia?", english: "Do you have animals?" },
     { latin: "Quid cras facies?", english: "What will you do tomorrow?" },
     { latin: "Quomodo est vita Romana?", english: "What is Roman life like?" },
-    { latin: "Quae tempestas tibi placet?", english: "What weather do you like?" }
+    { latin: "Quae tempestas tibi placet?", english: "What weather do you like?" },
+    { latin: "De familia tua narra", english: "Tell me about your family" },
+    { latin: "Ubi habitas?", english: "Where do you live?" }
 ];
