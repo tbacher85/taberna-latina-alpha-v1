@@ -16,19 +16,16 @@ const conversationSystem = {
             },
             userOptions: [
                 { 
-                    latin: "Mihi nomen [Nomen] est", 
-                    english: "My name is [Name]",
-                    nextStep: 2
+                    latin: "Mihi nomen est...", 
+                    english: "My name is...",
+                    nextStep: 2,
+                    isNamePrompt: true
                 },
                 { 
-                    latin: "Nomen mihi est [Nomen]", 
-                    english: "My name is [Name]",
-                    nextStep: 2
-                },
-                { 
-                    latin: "Ego sum [Nomen]", 
-                    english: "I am [Name]",
-                    nextStep: 2
+                    latin: "Nomen mihi est...", 
+                    english: "My name is...", 
+                    nextStep: 2,
+                    isNamePrompt: true
                 }
             ]
         },
@@ -70,17 +67,17 @@ const conversationSystem = {
                 { 
                     latin: "De foro Romano narra", 
                     english: "Tell me about the Roman Forum",
-                    nextStep: 4
+                    nextStep: 4  // This now correctly goes to Forum
                 },
                 { 
                     latin: "De thermis quaeso", 
                     english: "About the baths, please",
-                    nextStep: 5
+                    nextStep: 5  // This now correctly goes to Baths
                 },
                 { 
                     latin: "De cena Romana disco", 
                     english: "I want to learn about Roman dinner",
-                    nextStep: 6
+                    nextStep: 6  // This now correctly goes to Dinner
                 }
             ]
         },
@@ -299,23 +296,26 @@ const conversationSystem = {
             }
         }
 
-        // Find the selected option
+        // Find the selected option - IMPROVED MATCHING
         let selectedOption = currentStep.userOptions[0]; // Default to first option
         
         for (const option of currentStep.userOptions) {
-            // Remove [Nomen] placeholder for matching and check if message contains the Latin or English
-            const cleanLatin = option.latin.replace(/\[Nomen\]/g, '').trim().toLowerCase();
-            const cleanEnglish = option.english.replace(/\[Name\]/g, '').trim().toLowerCase();
+            // Clean the option texts for comparison
+            const cleanLatin = option.latin.replace(/\.\.\./g, '').trim().toLowerCase();
+            const cleanEnglish = option.english.replace(/\.\.\./g, '').trim().toLowerCase();
             const userMessageLower = userMessage.toLowerCase();
             
-            if (userMessageLower.includes(cleanLatin) || userMessageLower.includes(cleanEnglish)) {
+            // Check if user message contains the option text (either language)
+            if (userMessageLower.includes(cleanLatin) || 
+                userMessageLower.includes(cleanEnglish) ||
+                (option.isNamePrompt && userMessageLower.length > 1)) {
                 selectedOption = option;
                 break;
             }
         }
 
         // Move to next step
-        this.currentStep = selectedOption.nextStep;
+        this.currentStep = selectedOption.nextStep - 1; // Subtract 1 because steps are 1-indexed in the array
         const nextStep = this.conversationSteps[this.currentStep];
 
         if (!nextStep) {
@@ -337,10 +337,10 @@ const conversationSystem = {
         // Prepare suggestions for next step
         const nextSuggestions = nextStep.userOptions.map(opt => ({
             latin: currentContext.userName ? 
-                opt.latin.replace(/\[Nomen\]/g, currentContext.userName) : 
+                opt.latin.replace(/{name}/g, currentContext.userName) : 
                 opt.latin,
             english: currentContext.userName ? 
-                opt.english.replace(/\[Name\]/g, currentContext.userName) : 
+                opt.english.replace(/{name}/g, currentContext.userName) : 
                 opt.english
         }));
 
@@ -375,11 +375,12 @@ const conversationSystem = {
         
         return currentStep.userOptions.map(opt => ({
             latin: currentContext.userName ? 
-                opt.latin.replace(/\[Nomen\]/g, currentContext.userName) : 
+                opt.latin.replace(/{name}/g, currentContext.userName) : 
                 opt.latin,
             english: currentContext.userName ? 
-                opt.english.replace(/\[Name\]/g, currentContext.userName) : 
-                opt.english
+                opt.english.replace(/{name}/g, currentContext.userName) : 
+                opt.english,
+            isNamePrompt: opt.isNamePrompt || false
         }));
     },
 
