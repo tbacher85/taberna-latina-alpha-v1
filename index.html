@@ -542,9 +542,7 @@
                 </div>
                 
                 <div class="suggested-responses" id="suggested-responses">
-                    <button class="suggestion-btn" data-latin="Mihi nomen [Nomen] est">My name is...</button>
-                    <button class="suggestion-btn" data-latin="Salve Livia! Quomodo vales?">How are you?</button>
-                    <button class="suggestion-btn" data-latin="De te ipsa narra mihi">Tell me about yourself</button>
+                    <!-- Bubbles will be dynamically inserted here -->
                 </div>
             </div>
             
@@ -597,31 +595,8 @@
         "another-test@example.com"      // Add more if needed
     ];
     
-    // ==================== ENHANCED FAKE AI SYSTEM ====================
-// ==================== ADVANCED CONVERSATION SYSTEM ====================
-	latinConversationSystem = {
-		userName: null,
-		conversationContext: conversationSystem.resetConversation(),
-    
-		getResponse(userMessage) {
-        this.conversationContext.conversationDepth++;
-        
-			// Use the advanced response system
-			const response = conversationSystem.getResponse(userMessage, this.conversationContext);
-        
-			// Update context if there's a next topic
-			if (response.nextTopic && this.conversationContext.conversationDepth > 1) {
-            this.conversationContext.currentTopic = response.nextTopic;
-            this.conversationContext.conversationDepth = 0;
-			}
-        
-			return response;
-		},
-    
-		resetConversation() {
-        this.conversationContext = conversationSystem.resetConversation();
-		}
-	};
+    // ==================== CONVERSATION SYSTEM INTEGRATION ====================
+    let currentContext = conversationSystem.resetConversation();
     
     // ==================== APPLICATION LOGIC ====================
     const authSection = document.getElementById('auth-section');
@@ -635,7 +610,7 @@
     const typingIndicator = document.getElementById('typing-indicator');
     const dailyLimitMessage = document.getElementById('daily-limit-message');
     const upgradePrompt = document.getElementById('upgrade-prompt');
-    const suggestedResponsesContainer = document.getElementById('suggested-responses'); // CHANGED VARIABLE NAME
+    const suggestedResponsesContainer = document.getElementById('suggested-responses');
     
     let currentUser = null;
     let todaysMessageCount = 0;
@@ -717,8 +692,7 @@
             console.error('Error signing out:', error);
         } else {
             currentUser = null;
-            latinConversationSystem.userName = null;
-            latinConversationSystem.resetConversation();
+            currentContext = conversationSystem.resetConversation();
             showAuthInterface();
         }
     }
@@ -743,6 +717,15 @@
             testBadge.style.fontStyle = 'italic';
             userEmail.appendChild(testBadge);
         }
+        
+        // Initialize the conversation with the first question
+        const firstQuestion = conversationSystem.getCurrentQuestion(currentContext);
+        // Clear any existing messages and add the first question
+        chatMessages.innerHTML = '';
+        addMessage(firstQuestion.latin, firstQuestion.english, false);
+        
+        // Update suggestions for the first question
+        updateSuggestedResponses();
         
         // Show upgrade prompt after 5 messages for regular users
         if (todaysMessageCount >= 5 && !isTestUser()) {
@@ -875,25 +858,41 @@
         // Simulate AI thinking with enhanced response
         setTimeout(() => {
             hideTypingIndicator();
-            const response = latinConversationSystem.getResponse(message);
+            
+            // Get response from conversation system
+            const response = conversationSystem.getResponse(message, currentContext);
+            
+            // Add Livia's response
             addMessage(response.latin, response.english, false);
             
-            // Update suggested responses based on conversation
+            // Update suggested responses for the next question
             updateSuggestedResponses();
+            
         }, 1500 + Math.random() * 1000);
     }
     
     function updateSuggestedResponses() {
-        // Use the external suggested responses and pick 3 random ones
-        const shuffled = [...suggestedResponsesData].sort(() => 0.5 - Math.random()); // CHANGED VARIABLE NAME
-        suggestedResponsesContainer.innerHTML = ''; // CHANGED VARIABLE NAME
+        // Get current suggestions from conversation system
+        const currentSuggestions = conversationSystem.getCurrentSuggestions(currentContext);
         
-        shuffled.slice(0, 3).forEach(suggestion => {
+        console.log("Current step:", conversationSystem.currentStep);
+        console.log("Current suggestions:", currentSuggestions);
+        
+        // Clear existing suggestions
+        suggestedResponsesContainer.innerHTML = '';
+        
+        if (currentSuggestions.length === 0) {
+            console.warn("No suggestions available for current step");
+            return;
+        }
+        
+        // Add new suggestions
+        currentSuggestions.forEach(suggestion => {
             const button = document.createElement('button');
             button.className = 'suggestion-btn';
             button.textContent = suggestion.english;
             button.setAttribute('data-latin', suggestion.latin);
-            suggestedResponsesContainer.appendChild(button); // CHANGED VARIABLE NAME
+            suggestedResponsesContainer.appendChild(button);
         });
     }
     
@@ -917,19 +916,12 @@
             }
         });
         
-        // Suggested responses - CHANGED VARIABLE NAME
+        // Suggested responses
         suggestedResponsesContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('suggestion-btn')) {
                 const latinText = e.target.getAttribute('data-latin');
-                if (latinText.includes('[Nomen]')) {
-                    const name = prompt('Please enter your name:');
-                    if (name) {
-                        latinConversationSystem.userName = name;
-                        chatInput.value = latinText.replace('[Nomen]', name);
-                    }
-                } else {
-                    chatInput.value = latinText;
-                }
+                chatInput.value = latinText;
+                sendMessage();
             }
         });
         
@@ -949,14 +941,10 @@
             loadUserData().then(() => showChatInterface());
         } else if (event === 'SIGNED_OUT') {
             currentUser = null;
-            latinConversationSystem.userName = null;
-            latinConversationSystem.resetConversation();
+            currentContext = conversationSystem.resetConversation();
             showAuthInterface();
         }
     });
-    
-    // Initialize suggested responses
-    updateSuggestedResponses();
 </script>
 </body>
 </html>
