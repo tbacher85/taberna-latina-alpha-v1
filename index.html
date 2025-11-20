@@ -7,7 +7,460 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="conversation-data.js"></script>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --secondary: #D4AF37;
+            --accent: #C19A6B;
+            --dark: #3D2B1F;
+            --light: #F5F5DC;
+            --text: #2F1B0C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Playfair Display', serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%233D2B1F"/><path d="M0,0 Q50,20 100,0 L100,100 Q50,80 0,100 Z" fill="%234A3520" opacity="0.3"/></svg>');
+            background-size: cover;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+        
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: var(--secondary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+        
+        .auth-section {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .auth-options {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        
+        .google-auth-btn, .email-auth-btn {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .email-auth-btn {
+            background: var(--secondary);
+            color: var(--dark);
+        }
+        
+        .google-auth-btn:hover, .email-auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .email-auth-form {
+            display: none;
+            max-width: 400px;
+            margin: 2rem auto;
+            text-align: left;
+        }
+        
+        .email-auth-form input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: var(--light);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            color: var(--text);
+        }
+        
+        .user-profile {
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .user-email {
+            color: var(--secondary);
+            font-family: 'Cinzel', serif;
+        }
+        
+        .logout-btn {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .fresco-container {
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            border: 15px solid var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+        }
+        
+        .fresco {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(210, 180, 140, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(160, 120, 80, 0.4) 0%, transparent 50%),
+                linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+        }
+        
+        .fresco-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .chat-preview {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(61, 43, 31, 0.8);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--accent);
+        }
+        
+        .chat-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            color: var(--dark);
+            font-weight: bold;
+        }
+        
+        .chat-partner {
+            font-family: 'Cinzel', serif;
+            color: var(--secondary);
+        }
+        
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            min-height: 150px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            max-width: 80%;
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-bot {
+            background: rgba(193, 154, 107, 0.3);
+            border: 1px solid var(--accent);
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+        
+        .message-user {
+            background: rgba(212, 175, 55, 0.3);
+            border: 1px solid var(--secondary);
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+        
+        .latin-text {
+            font-style: italic;
+            margin-bottom: 0.3rem;
+        }
+        
+        .translation {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            border-top: 1px dashed rgba(255,255,255,0.2);
+            padding-top: 0.3rem;
+        }
+        
+        .chat-input-area {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 0.8rem;
+            background: var(--light);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            font-family: 'Playfair Display', serif;
+            color: var(--text);
+        }
+        
+        .chat-send {
+            background: var(--secondary);
+            color: var(--dark);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+        }
+        
+        .suggested-responses {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .suggestion-btn {
+            background: rgba(61, 43, 31, 0.7);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .suggestion-btn:hover {
+            background: rgba(193, 154, 107, 0.3);
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 0.8rem 1rem;
+            background: rgba(193, 154, 107, 0.3);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+            font-style: italic;
+            color: var(--accent);
+        }
+        
+        .typing-dots {
+            display: inline-block;
+        }
+        
+        .typing-dots::after {
+            content: '...';
+            animation: typing 1.5s infinite;
+        }
+        
+        @keyframes typing {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .daily-limit-message {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid var(--secondary);
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .upgrade-prompt {
+            background: rgba(139, 69, 19, 0.8);
+            border: 2px solid var(--secondary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .upgrade-btn {
+            background: var(--secondary);
+            color: var(--dark);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-align: center;
+        }
+        
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin: 2rem 0 1rem;
+            text-align: center;
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            text-align: center;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .highlight {
+            color: var(--secondary);
+            font-weight: bold;
+            font-style: italic;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature {
+            background: rgba(61, 43, 31, 0.7);
+            padding: 1.5rem;
+            border-radius: 5px;
+            border: 1px solid var(--accent);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        .feature h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid var(--accent);
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .fresco-container {
+                max-width: 100%;
+            }
+            
+            .auth-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -89,7 +542,9 @@
                 </div>
                 
                 <div class="suggested-responses" id="suggested-responses">
-                    <!-- Suggested responses will be loaded by JavaScript -->
+                    <button class="suggestion-btn" data-latin="Mihi nomen [Nomen] est">My name is...</button>
+                    <button class="suggestion-btn" data-latin="Salve Livia! Quomodo vales?">How are you?</button>
+                    <button class="suggestion-btn" data-latin="De te ipsa narra mihi">Tell me about yourself</button>
                 </div>
             </div>
             
@@ -128,13 +583,416 @@
         </footer>
     </div>
 
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script>
+    // ==================== SUPABASE CONFIGURATION ====================
+    const SUPABASE_URL = 'https://dwzhiqtqfsfcxkkaghzi.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3emhpcXRxZnNmY3hra2FnaHppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1MTU3NTgsImV4cCI6MjA3OTA5MTc1OH0.kYFO-FJtu_Ry43mi7JRevDj68Ktwov12LJg5juEvZQA';
     
-    <!-- Our JavaScript Files -->
-    <script src="js/database.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/chat.js"></script>
-    <script src="js/app.js"></script>
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // ==================== TEST EMAIL CONFIGURATION ====================
+    // Add your test emails here to bypass the 10 messages limit
+    const TEST_EMAILS = [
+        "timothe.bacher@gmail.com",  // Replace with your actual test email
+        "another-test@example.com"      // Add more if needed
+    ];
+    
+    // ==================== ENHANCED FAKE AI SYSTEM ====================
+    const latinConversationSystem = {
+        userName: null,
+        conversationContext: {
+            knowsName: false,
+            topicsDiscussed: [],
+            currentTopic: 'greeting',
+            conversationDepth: 0
+        },
+        
+        // Use the external scenarios from conversation-data.js
+        scenarios: conversationScenarios,
+        
+        getResponse(userMessage) {
+            this.conversationContext.conversationDepth++;
+            
+            // Extract name if provided
+            if (!this.userName && (userMessage.toLowerCase().includes('mihi nomen') || userMessage.toLowerCase().includes('my name is'))) {
+                const nameMatch = userMessage.match(/(?:mihi nomen|my name is|nomen mihi est)\s+([A-Za-z]+)/i);
+                if (nameMatch && nameMatch[1]) {
+                    this.userName = nameMatch[1];
+                    this.conversationContext.knowsName = true;
+                    this.conversationContext.currentTopic = 'name_response';
+                }
+            }
+            
+            // Get current scenario
+            const currentScenario = this.scenarios[this.conversationContext.currentTopic];
+            if (!currentScenario) {
+                const randomDefault = this.scenarios.default[Math.floor(Math.random() * this.scenarios.default.length)];
+                return randomDefault;
+            }
+            
+            // Get a response from current scenario
+            const response = currentScenario[Math.floor(Math.random() * currentScenario.length)];
+            
+            // Move to next topic
+            if (response.nextTopic && this.conversationContext.conversationDepth > 2) {
+                this.conversationContext.currentTopic = response.nextTopic;
+                this.conversationContext.conversationDepth = 0;
+            }
+            
+            // Personalize response with user's name
+            let finalResponse = {...response};
+            if (this.userName) {
+                finalResponse.latin = finalResponse.latin.replace('[NAME]', this.userName);
+                finalResponse.english = finalResponse.english.replace('[NAME]', this.userName);
+            }
+            
+            return finalResponse;
+        },
+        
+        resetConversation() {
+            this.conversationContext = {
+                knowsName: false,
+                topicsDiscussed: [],
+                currentTopic: 'greeting',
+                conversationDepth: 0
+            };
+        }
+    };
+    
+    // ==================== APPLICATION LOGIC ====================
+    const authSection = document.getElementById('auth-section');
+    const userProfile = document.getElementById('user-profile');
+    const userEmail = document.getElementById('user-email');
+    const messageCount = document.getElementById('message-count');
+    const chatInterface = document.getElementById('chat-interface');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const dailyLimitMessage = document.getElementById('daily-limit-message');
+    const upgradePrompt = document.getElementById('upgrade-prompt');
+    const suggestedResponses = document.getElementById('suggested-responses');
+    
+    let currentUser = null;
+    let todaysMessageCount = 0;
+    const DAILY_MESSAGE_LIMIT = 10;
+    
+    // Check if user is a test user (bypasses limit)
+    function isTestUser() {
+        return currentUser && TEST_EMAILS.includes(currentUser.email);
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        checkAuthState();
+        setupEventListeners();
+    });
+    
+    // Auth Functions
+    async function checkAuthState() {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            currentUser = user;
+            await loadUserData();
+            showChatInterface();
+        } else {
+            showAuthInterface();
+        }
+    }
+    
+    async function loadUserData() {
+        // Don't track usage for test users
+        if (isTestUser()) {
+            todaysMessageCount = 0; // Test users have unlimited messages
+            updateMessageCounter();
+            return;
+        }
+        
+        // Get today's message count for regular users
+        const today = new Date().toISOString().split('T')[0];
+        const { data } = await supabase
+            .from('user_usage')
+            .select('messages_sent')
+            .eq('user_id', currentUser.id)
+            .eq('date', today)
+            .single();
+            
+        todaysMessageCount = data ? data.messages_sent : 0;
+        updateMessageCounter();
+    }
+    
+    async function signInWithGoogle() {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+        });
+        
+        if (error) {
+            console.error('Error signing in:', error);
+            alert('Error signing in. Please try again.');
+        }
+    }
+    
+    async function signInWithEmail(email) {
+        const { error } = await supabase.auth.signInWithOtp({
+            email: email,
+            options: {
+                emailRedirectTo: 'https://tbacher85.github.io/taberna-latina-alpha/',
+            },
+        });
+        
+        if (error) {
+            alert('Error sending magic link: ' + error.message);
+        } else {
+            alert('Check your email for the magic link!');
+        }
+    }
+    
+    async function signOut() {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error('Error signing out:', error);
+        } else {
+            currentUser = null;
+            latinConversationSystem.userName = null;
+            latinConversationSystem.resetConversation();
+            showAuthInterface();
+        }
+    }
+    
+    function showAuthInterface() {
+        authSection.classList.remove('hidden');
+        userProfile.classList.add('hidden');
+        chatInterface.classList.add('hidden');
+    }
+    
+    async function showChatInterface() {
+        authSection.classList.add('hidden');
+        userProfile.classList.remove('hidden');
+        chatInterface.classList.remove('hidden');
+        userEmail.textContent = currentUser.email;
+        
+        // Show test user badge if applicable
+        if (isTestUser()) {
+            const testBadge = document.createElement('span');
+            testBadge.textContent = ' (Test User - Unlimited Messages)';
+            testBadge.style.color = 'var(--secondary)';
+            testBadge.style.fontStyle = 'italic';
+            userEmail.appendChild(testBadge);
+        }
+        
+        // Show upgrade prompt after 5 messages for regular users
+        if (todaysMessageCount >= 5 && !isTestUser()) {
+            upgradePrompt.classList.remove('hidden');
+            document.getElementById('upgrade-email').value = currentUser.email;
+        }
+        
+        updateMessageCounter();
+    }
+    
+    function updateMessageCounter() {
+        if (isTestUser()) {
+            messageCount.textContent = `${todaysMessageCount} (Unlimited)`;
+            messageCount.style.color = 'var(--secondary)';
+        } else {
+            messageCount.textContent = `${todaysMessageCount}/${DAILY_MESSAGE_LIMIT}`;
+            messageCount.style.color = 'var(--light)';
+        }
+        
+        // Only enforce limit for non-test users
+        if (todaysMessageCount >= DAILY_MESSAGE_LIMIT && !isTestUser()) {
+            chatInput.disabled = true;
+            chatSend.disabled = true;
+            dailyLimitMessage.style.display = 'block';
+            upgradePrompt.classList.remove('hidden');
+        } else {
+            chatInput.disabled = false;
+            chatSend.disabled = false;
+            dailyLimitMessage.style.display = 'none';
+        }
+    }
+    
+    // Chat Functions
+    function addMessage(latinText, englishText, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'message-user' : 'message-bot'}`;
+        
+        messageDiv.innerHTML = `
+            <div class="latin-text">${latinText}</div>
+            <div class="translation">${englishText}</div>
+        `;
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Track conversation in Supabase (only for non-test users)
+        if (currentUser && !isTestUser()) {
+            trackMessage(latinText, englishText, isUser);
+        }
+    }
+    
+    async function trackMessage(latinText, englishText, isUser) {
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Update daily usage
+        const { data: usageData } = await supabase
+            .from('user_usage')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .eq('date', today)
+            .single();
+            
+        if (usageData) {
+            await supabase
+                .from('user_usage')
+                .update({ 
+                    messages_sent: usageData.messages_sent + 1,
+                    last_active: new Date()
+                })
+                .eq('id', usageData.id);
+        } else {
+            await supabase
+                .from('user_usage')
+                .insert([{
+                    user_id: currentUser.id,
+                    date: today,
+                    messages_sent: 1,
+                    last_active: new Date()
+                }]);
+        }
+        
+        // Log conversation
+        await supabase
+            .from('conversations')
+            .insert([{
+                user_id: currentUser.id,
+                user_message: isUser ? latinText : null,
+                ai_message: !isUser ? latinText : null,
+                ai_translation: !isUser ? englishText : null,
+                created_at: new Date()
+            }]);
+        
+        // Track limit hits
+        if (usageData && usageData.messages_sent + 1 >= DAILY_MESSAGE_LIMIT) {
+            await supabase
+                .from('limit_hits')
+                .insert([{
+                    user_id: currentUser.id,
+                    hit_time: new Date(),
+                    message_count: usageData.messages_sent + 1
+                }]);
+        }
+        
+        todaysMessageCount++;
+        updateMessageCounter();
+    }
+    
+    function showTypingIndicator() {
+        typingIndicator.style.display = 'block';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    function hideTypingIndicator() {
+        typingIndicator.style.display = 'none';
+    }
+    
+    function sendMessage() {
+        const message = chatInput.value.trim();
+        
+        // Check limit only for non-test users
+        if (!message || (todaysMessageCount >= DAILY_MESSAGE_LIMIT && !isTestUser())) return;
+        
+        // Add user message
+        addMessage(message, "Your message", true);
+        chatInput.value = '';
+        
+        // Show typing indicator
+        showTypingIndicator();
+        
+        // Simulate AI thinking with enhanced response
+        setTimeout(() => {
+            hideTypingIndicator();
+            const response = latinConversationSystem.getResponse(message);
+            addMessage(response.latin, response.english, false);
+            
+            // Update suggested responses based on conversation
+            updateSuggestedResponses();
+        }, 1500 + Math.random() * 1000);
+    }
+    
+    function updateSuggestedResponses() {
+        // Use the external suggested responses and pick 3 random ones
+        const shuffled = [...suggestedResponses].sort(() => 0.5 - Math.random());
+        suggestedResponses.innerHTML = '';
+        
+        shuffled.slice(0, 3).forEach(suggestion => {
+            const button = document.createElement('button');
+            button.className = 'suggestion-btn';
+            button.textContent = suggestion.english;
+            button.setAttribute('data-latin', suggestion.latin);
+            suggestedResponses.appendChild(button);
+        });
+    }
+    
+    function setupEventListeners() {
+        // Auth
+        document.getElementById('google-auth-btn').addEventListener('click', signInWithGoogle);
+        document.getElementById('email-auth-btn').addEventListener('click', function() {
+            document.getElementById('email-auth-form').style.display = 'block';
+        });
+        document.getElementById('send-magic-link').addEventListener('click', function() {
+            const email = document.getElementById('email-input').value.trim();
+            if (email) signInWithEmail(email);
+        });
+        document.getElementById('logout-btn').addEventListener('click', signOut);
+        
+        // Chat
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Suggested responses
+        suggestedResponses.addEventListener('click', (e) => {
+            if (e.target.classList.contains('suggestion-btn')) {
+                const latinText = e.target.getAttribute('data-latin');
+                if (latinText.includes('[Nomen]')) {
+                    const name = prompt('Please enter your name:');
+                    if (name) {
+                        latinConversationSystem.userName = name;
+                        chatInput.value = latinText.replace('[Nomen]', name);
+                    }
+                } else {
+                    chatInput.value = latinText;
+                }
+            }
+        });
+        
+        // Upgrade form
+        document.getElementById('upgrade-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your interest! We will contact you about premium features soon.');
+            // Formspree will handle the actual submission
+            this.submit();
+        });
+    }
+    
+    // Listen for auth state changes
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+            currentUser = session.user;
+            loadUserData().then(() => showChatInterface());
+        } else if (event === 'SIGNED_OUT') {
+            currentUser = null;
+            latinConversationSystem.userName = null;
+            latinConversationSystem.resetConversation();
+            showAuthInterface();
+        }
+    });
+    
+    // Initialize suggested responses
+    updateSuggestedResponses();
+</script>
 </body>
 </html>
