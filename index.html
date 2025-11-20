@@ -593,7 +593,7 @@
     // ==================== TEST EMAIL CONFIGURATION ====================
     // Add your test emails here to bypass the 10 messages limit
     const TEST_EMAILS = [
-        "timothe.bacher@gmail.com",  // Replace with your actual test email
+        "your-test-email@example.com",  // Replace with your actual test email
         "another-test@example.com"      // Add more if needed
     ];
     
@@ -671,7 +671,7 @@
     const typingIndicator = document.getElementById('typing-indicator');
     const dailyLimitMessage = document.getElementById('daily-limit-message');
     const upgradePrompt = document.getElementById('upgrade-prompt');
-    const suggestedResponses = document.getElementById('suggested-responses');
+    const suggestedResponsesContainer = document.getElementById('suggested-responses'); // CHANGED VARIABLE NAME
     
     let currentUser = null;
     let todaysMessageCount = 0;
@@ -921,15 +921,15 @@
     
     function updateSuggestedResponses() {
         // Use the external suggested responses and pick 3 random ones
-        const shuffled = [...suggestedResponses].sort(() => 0.5 - Math.random());
-        suggestedResponses.innerHTML = '';
+        const shuffled = [...suggestedResponsesData].sort(() => 0.5 - Math.random()); // CHANGED VARIABLE NAME
+        suggestedResponsesContainer.innerHTML = ''; // CHANGED VARIABLE NAME
         
         shuffled.slice(0, 3).forEach(suggestion => {
             const button = document.createElement('button');
             button.className = 'suggestion-btn';
             button.textContent = suggestion.english;
             button.setAttribute('data-latin', suggestion.latin);
-            suggestedResponses.appendChild(button);
+            suggestedResponsesContainer.appendChild(button); // CHANGED VARIABLE NAME
         });
     }
     
@@ -953,8 +953,8 @@
             }
         });
         
-        // Suggested responses
-        suggestedResponses.addEventListener('click', (e) => {
+        // Suggested responses - CHANGED VARIABLE NAME
+        suggestedResponsesContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('suggestion-btn')) {
                 const latinText = e.target.getAttribute('data-latin');
                 if (latinText.includes('[Nomen]')) {
