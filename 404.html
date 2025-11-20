@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Taberna - Redirecting</title>
+    <script>
+        // Handle Supabase auth callback
+        function handleAuthCallback() {
+            const hash = window.location.hash;
+            if (hash && hash.includes('access_token')) {
+                // This is a Supabase auth callback - redirect to main app
+                const mainAppUrl = 'https://tbacher85.github.io/taberna-latina-alpha-v1/';
+                window.location.href = mainAppUrl + hash;
+            } else {
+                // Regular 404 - go to main page
+                window.location.href = 'https://tbacher85.github.io/taberna-latina-alpha-v1/';
+            }
+        }
+        
+        // Handle both hash and query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get('access_token');
+        
+        if (accessToken) {
+            // Token in query parameters (older format)
+            window.location.href = 'https://tbacher85.github.io/taberna-latina-alpha-v1/#access_token=' + accessToken;
+        } else {
+            // Check hash or redirect to main page
+            handleAuthCallback();
+        }
+    </script>
+</head>
+<body>
+    <p>Redirecting to Taberna...</p>
+</body>
+</html>
