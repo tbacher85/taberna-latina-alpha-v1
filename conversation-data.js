@@ -90,8 +90,8 @@ const conversationScenarios = {
     ]
 };
 
-// Suggested responses that can be easily updated
-const suggestedResponses = [
+// Suggested responses that can be easily updated - CHANGED VARIABLE NAME
+const suggestedResponsesData = [
     { latin: "Mihi nomen [Nomen] est", english: "My name is..." },
     { latin: "Salve Livia! Quomodo vales?", english: "How are you?" },
     { latin: "De te ipsa narra mihi", english: "Tell me about yourself" },
