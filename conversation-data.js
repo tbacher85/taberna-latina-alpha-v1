@@ -16,8 +16,8 @@ const conversationSystem = {
             },
             userOptions: [
                 { 
-                    latin: "Type your name below...", 
-                    english: "Type your name below...",
+                    latin: "Type your name above...", 
+                    english: "Type your name above...",
                     nextStep: 2,
                     isNamePrompt: true
                 }
@@ -520,8 +520,8 @@ const conversationSystem = {
             // If no next step, restart conversation
             this.currentStep = 0;
             return {
-                latin: "Gratias pro colloquio! Visne iterum colloqui?",
-                english: "Thanks for the conversation! Would you like to chat again?",
+                latin: "Gratias tibi ago, {name}, pro hoc colloquio iucundo! Spero te aliquid novi de Roma antiqua discere. Semper bene vale et, si vis, iterum me visita!",
+                english: "Thank you, {name}, for this pleasant conversation! I hope you learned something new about ancient Rome. Farewell always, and if you wish, visit me again!",
                 suggestions: this.conversationSteps[0].userOptions
             };
         }
