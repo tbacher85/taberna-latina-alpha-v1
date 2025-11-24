@@ -106,13 +106,13 @@ const conversationSystem = {
         {
             id: 5,
             livia: {
-                latin: "Thermae non solum ad lavandum sunt! Ibi socializamus, negotia agimus, et relaxamus. Aqua calida et frigida, unctores qui nos ungunt... estne interesting, {name}?",
-                english: "The baths are not just for washing! There we socialize, do business, and relax. Hot and cold water, ointment-rubbers who massage us... is it interesting, {name}?"
+                latin: "Thermae non solum ad lavandum sunt! Ibi colloquimur, negotia agimus, et relaxamus. Aqua calida et frigida, unctores qui nos ungunt... Estne iucundum, {name}?",
+                english: "The baths are not only for washing! There we converse, we transact business, and we relax. Hot and cold water, attendants who rub us down... Is it pleasant/interesting, {name}?"
             },
             userOptions: [
                 { 
-                    latin: "Valde interesting est!", 
-                    english: "It's very interesting!",
+                    latin: "Valde iucundum est!", 
+                    english: "It is very pleasant/delightful!",
                     nextStep: 10
                 },
                 { 
@@ -121,8 +121,8 @@ const conversationSystem = {
                     nextStep: 10
                 },
                 { 
-                    latin: "De socializatione disco", 
-                    english: "I want to learn about socialization",
+                    latin: "De colloquio disco?", 
+                    english: "I want to learn about conversation/discussion?",
                     nextStep: 10
                 }
             ]
@@ -262,8 +262,8 @@ const conversationSystem = {
         {
             id: 11,
             livia: {
-                latin: "Cum amicis cenare est optimus modus ad socializandum! In triclinio recumbimus, cibum bonum sumimus, et de omni re colloquimur. Quid cenare cum amicis maxime amas, {name}?",
-                english: "Dining with friends is the best way to socialize! In the dining room we recline, eat good food, and chat about everything. What do you like most about dining with friends, {name}?"
+                latin: "Cum amicis cenare est optimus modus ad colloquium! In triclinio recumbimus, cibum bonum sumimus, et de omni re colloquimur. Quid edĕre cum amicis maxime amas, {name}?",
+                english: "To dine with friends is the best way for conversation! We recline in the dining room, we eat good food, and we converse about everything. What do you most love to eat with friends, {name}?"
             },
             userOptions: [
                 { 
@@ -277,8 +277,8 @@ const conversationSystem = {
                     nextStep: 17
                 },
                 { 
-                    latin: "Atmosphæra socialis", 
-                    english: "The social atmosphere",
+                    latin: "Iūcunditas Convivii", 
+                    english: "The Pleasantness/Enjoyment of the Dinner Party",
                     nextStep: 17
                 }
             ]
@@ -340,8 +340,8 @@ const conversationSystem = {
         {
             id: 14,
             livia: {
-                latin: "De aliis rebus? Certē! In Roma multa interesting sunt: ludi gladiatorii, theatrum, poëtae, philosophi... Quid vis audire, {name}?",
-                english: "About other things? Certainly! In Rome many things are interesting: gladiator games, theater, poets, philosophers... What do you want to hear, {name}?"
+                latin: "De aliis rebus? Certē! In Roma multa iucunda sunt: ludi gladiatorii, theatrum, poëtae, philosophi... Quid vis audire, {name}?",
+                english: "About other things? Certainly! In Rome there are many delightful/pleasant things: gladiatorial games, theater, poets, philosophers... What do you want to hear, {name}?"
             },
             userOptions: [
                 { 
@@ -520,8 +520,8 @@ const conversationSystem = {
             // If no next step, restart conversation
             this.currentStep = 0;
             return {
-                latin: "Gratias tibi ago, {name}, pro hoc colloquio iucundo! Spero te aliquid novi de Roma antiqua discere. Semper bene vale et, si vis, iterum me visita!",
-                english: "Thank you, {name}, for this pleasant conversation! I hope you learned something new about ancient Rome. Farewell always, and if you wish, visit me again!",
+                latin: "Gratias tibi ago ob hoc colloquium iucundum! Spero te aliquid novi de Roma antiqua didicisse. Semper bene vale et, si vis, iterum me visita!",
+                english: "I thank you for this pleasant conversation! I hope you have learned something new about ancient Rome. Always be well (Farewell) and, if you wish, visit me again!",
                 suggestions: this.conversationSteps[0].userOptions
             };
         }
