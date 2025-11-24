@@ -62,6 +62,22 @@
             margin-bottom: 2rem;
             font-style: italic;
         }
+
+        /* NEW: Header image styles */
+        .header-image {
+            max-width: 400px;
+            margin: 2rem auto;
+            border: 8px solid var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .header-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
         
         .auth-section {
             text-align: center;
@@ -467,6 +483,12 @@
         <header>
             <div class="logo">TABERNA</div>
             <div class="tagline">Latin is not dead. It's been waiting 2,000 years to speak with you.</div>
+            
+            <!-- NEW: Image space between tagline and auth section -->
+            <div class="header-image">
+                <!-- Replace 'your-image.jpg' with the actual filename you upload to your GitHub repo -->
+                <img src="taberna-header-image.jpg" alt="Ancient Roman Scene" onerror="this.style.display='none'">
+            </div>
         </header>
         
         <!-- Auth Section -->
@@ -581,6 +603,25 @@
         </footer>
     </div>
 
+    <!-- NEW: OAuth Callback Handler Script -->
+    <script>
+    // Handle OAuth callback when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if we have an OAuth token in the URL
+        if (window.location.hash && window.location.hash.includes('access_token')) {
+            console.log('OAuth callback detected, processing authentication...');
+            
+            // The Supabase client will automatically handle the token exchange
+            // We just need to wait for the auth state to update
+            setTimeout(() => {
+                // Clear the URL fragment to remove tokens from address bar
+                window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+                console.log('OAuth callback processed, URL cleaned');
+            }, 1000);
+        }
+    });
+    </script>
+
 	<script>
     // ==================== SUPABASE CONFIGURATION ====================
     const SUPABASE_URL = 'https://dwzhiqtqfsfcxkkaghzi.supabase.co';
@@ -663,6 +704,9 @@
     async function signInWithGoogle() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
+            options: {
+                redirectTo: 'https://tbacher85.github.io/taberna-latina-alpha-v1/'
+            }
         });
         
         if (error) {
